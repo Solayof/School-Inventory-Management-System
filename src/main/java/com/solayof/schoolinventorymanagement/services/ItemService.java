@@ -3,11 +3,13 @@ package com.solayof.schoolinventorymanagement.services;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.solayof.schoolinventorymanagement.entity.Item;
 import com.solayof.schoolinventorymanagement.exceptions.ItemNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.ItemRepository;
 
+@Service
 public class ItemService {
     @Autowired // Using Spring's @Autowired to inject the ItemRepository
     private ItemRepository itemRepository; // Injecting the ItemRepository to interact with the database
@@ -23,7 +25,7 @@ public class ItemService {
         return itemRepository.findById(itemId)
                 .orElseThrow(()-> new ItemNotFoundException("Item not found with id: " + itemId));
     }
-    
+
     /**
      * Finds an item by its name.
      *
