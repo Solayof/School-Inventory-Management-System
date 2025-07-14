@@ -82,43 +82,44 @@
     		<artifactId>javafaker</artifactId>
     		<version>1.0.2</version>
 		</dependency>
-	</dependencies>
-	<dependency>
+	
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
-	</dependency>
-	<dependency>
+		</dependency>
+		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-impl</artifactId>
 			<version>0.11.5</version>
-	</dependency>
+		</dependency>
 
-	<dependency>
+		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-jackson</artifactId>
 			<version>0.11.5</version>
-	</dependency>
-	<dependency>
+		</dependency>
+		<dependency>
     		<groupId>org.junit.jupiter</groupId>
     		<artifactId>junit-jupiter</artifactId>
    	 		<version>5.10.0</version>
     		<scope>test</scope>
-	</dependency>
-	<dependency>
+		</dependency>
+		<dependency>
     		<groupId>org.mockito</groupId>
     		<artifactId>mockito-core</artifactId>
     		<version>5.11.0</version>
     		<scope>test</scope>
-	</dependency>
-	<dependency>
+		</dependency>
+		<dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.5.0</version>
-	</dependency>
-	<dependency>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-	</dependency>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
