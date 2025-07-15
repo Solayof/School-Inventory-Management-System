@@ -1,5 +1,6 @@
 package com.solayof.schoolinventorymanagement.services;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,16 @@ public class ItemService {
     }
 
     /**
+     * Exists by id.
+     * Checks if an item exists by its ID.
+     * @param itemId the ID of the item to check
+     * @return true if an item with the given ID exists, false otherwise
+     */
+    public boolean existsById(UUID itemId) {
+        return itemRepository.existsById(itemId);
+    }
+
+    /**
      * Finds an item by its name.
      *
      * @param name the name of the item to find
@@ -36,6 +47,26 @@ public class ItemService {
     public Item findByName(String name) {
         return itemRepository.findByName(name)
                 .orElseThrow(() -> new ItemNotFoundException("Item not found with name: " + name));
+    }
+
+    /**
+     * Checks if an item exists by its name.
+     * 
+     * @param name the name of the item to check
+     * @return true if an item with the given name exists, false otherwise
+     */
+    public boolean existsByName(String name) {
+        return itemRepository.existsByName(name);
+    }
+
+    /**
+     * Exists by serial number.
+     * Checks if an item exists by its serial number.
+     * @param serialNumber the serial number of the item to check
+     * @return true if an item with the given serial number exists, false otherwise
+     */
+    public boolean existsBySerialNumber(String serialNumber) {
+        return itemRepository.existsBySerialNumber(serialNumber);
     }
 
     /**
@@ -71,5 +102,28 @@ public class ItemService {
     public Item saveItem(Item item) {
         return itemRepository.save(item);
     }
+
+    /**
+     * findAllItems
+     * Retrieves all items from the repository.
+     * @return a list of all Item entities
+     * @throws ItemNotFoundException if no items are found
+     * 
+     */
+    public List<Item> findAllItems() {
+        return itemRepository.findAll();
+    }
+
+    /**
+     * Deletes a item by its ID.
+     *
+     * @param itemId the ID of the item to delete
+     * @throws ItemNotFoundException if no item is found with the given ID
+     */
+    public void deleteItem(UUID itemId) {
+        Item item = findByItemId(itemId);
+        itemRepository.delete(item);
+    }
+
 }
 
