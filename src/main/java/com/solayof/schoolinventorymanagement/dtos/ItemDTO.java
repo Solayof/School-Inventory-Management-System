@@ -5,7 +5,6 @@ import java.util.UUID;
 import com.solayof.schoolinventorymanagement.entity.Item;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class ItemDTO {
@@ -19,9 +18,11 @@ public class ItemDTO {
     @NotNull(message = "Serial number cannot be null")
     private String serialNumber;
     @NotNull(message = "Category ID cannot be null")
-    @Pattern(regexp = "^[a-fA-F0-9-]{36}$", message = "Category ID must be a valid UUID format")
-    @Size(min = 36, max = 36, message = "Category ID must be exactly 36 characters long")
+    // @Pattern(regexp = "^[a-fA-F0-9-]{36}$", message = "Category ID must be a valid UUID format")
+    // @Size(min = 36, max = 36, message = "Category ID must be exactly 36 characters long")
     private UUID categoryId;
+    @NotNull(message = "Status cannot be null")
+    @Size(max = 10, message = "Status must be at most 10 characters")
     private String status; // Status of the item, e.g., "AVAILABLE", "ASSIGNED", "RETURNED"
 
     public ItemDTO() {
@@ -88,6 +89,7 @@ public class ItemDTO {
         dto.setDescription(item.getDescription());
         dto.setSerialNumber(item.getSerialNumber());
         dto.setCategoryId(item.getCategory().getId());
+        dto.setStatus(item.getStatus().name());
         return dto;
     }
 }
