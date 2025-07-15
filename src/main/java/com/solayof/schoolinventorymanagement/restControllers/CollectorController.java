@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import com.solayof.schoolinventorymanagement.dtos.CollectorDTO;
+import com.solayof.schoolinventorymanagement.dtos.UpdateCollectorDTO;
 import com.solayof.schoolinventorymanagement.entity.Collector;
 import com.solayof.schoolinventorymanagement.modelAssembler.CollectorModelAssembler;
 import com.solayof.schoolinventorymanagement.services.CollectorService;
@@ -109,8 +110,8 @@ public class CollectorController {
      * @param entity the CollectorDTO containing the updated collector details
      * @return EntityModel<CollectorDTO> containing the updated collector and links
      */
-    @PutMapping("/{collectorId}/update")
-    public ResponseEntity<EntityModel<CollectorDTO>> updateCollector(@PathVariable UUID collectorId, @Valid @RequestBody CollectorDTO entity) {
+    @PutMapping("/{collectorId}")
+    public ResponseEntity<EntityModel<CollectorDTO>> updateCollector(@PathVariable UUID collectorId, @Valid @RequestBody UpdateCollectorDTO entity) {
         Collector collector = collectorService.findByCollectorId(collectorId);
         if (entity.getEmail() != null && collectorService.existsByEmail(entity.getEmail())) {
             throw new IllegalArgumentException("Collector with email " + entity.getEmail() + " already exists.");
