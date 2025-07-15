@@ -7,7 +7,6 @@ import java.util.UUID;
 import com.solayof.schoolinventorymanagement.entity.Assignment;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 public class AssignmentDTO {
     private UUID id;
@@ -20,12 +19,8 @@ public class AssignmentDTO {
     private Instant createdAt; // Timestamp when the assignment was created
     private Instant updatedAt; // Timestamp when the assignment was last updated
     @NotNull(message = "Item ID cannot be null")
-    @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
-             message = "Invalid UUID format for Item ID")
     private UUID itemId; // ID of the item being assigned
     @NotNull(message = "Collector ID cannot be null")
-    @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
-             message = "Invalid UUID format for Collector ID")
     private UUID collectorId; // ID of the collector to whom the item is assigned
 
     public AssignmentDTO() {
