@@ -56,5 +56,11 @@ public class Collector {
     @OneToMany(mappedBy = "collector", cascade = CascadeType.ALL, orphanRemoval = true) // mappedBy indicates the field in the Assignment entity that owns the relationship
     // CascadeType.ALL means all operations (persist, merge, remove, refresh, detach)
     private Set<Assignment> assignments = new HashSet<>();
+
+    public Collector(String name, String contactInformation, String email) {
+        this.name = name;
+        this.contactInformation = contactInformation;
+        this.email = email;
+    }
 }
 
