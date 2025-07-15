@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.solayof.schoolinventorymanagement.constants.Status;
 import com.solayof.schoolinventorymanagement.dtos.AssignmentDTO;
 import com.solayof.schoolinventorymanagement.dtos.UpdateAssignmentDTO;
 import com.solayof.schoolinventorymanagement.entity.Assignment;
 import com.solayof.schoolinventorymanagement.entity.Collector;
+import com.solayof.schoolinventorymanagement.entity.Item;
 import com.solayof.schoolinventorymanagement.modelAssembler.AssignmentModelAssembler;
 import com.solayof.schoolinventorymanagement.services.AssignmentService;
 import com.solayof.schoolinventorymanagement.services.CollectorService;
@@ -60,13 +62,23 @@ public class AssignmentController {
     @PostMapping("")
     public ResponseEntity<EntityModel<AssignmentDTO>> createCollector(@Valid @RequestBody AssignmentDTO entity) {
         Collector collector = collectorService.findByCollectorId(entity.getCollectorId());
-        
+        if (entity.getReturnDueDate().isBefore(entity.getAssignmentDate())) {
+            throw new IllegalArgumentException("Actual return date cannot be before assignment date.");
+        }
         Assignment assignment = new Assignment();
-        assignment.setActualReturnDate(entity.getActualRetunDate());
+        assignment.setReturnDueDate(entity.getReturnDueDate());
         assignment.setAssignmentDate(entity.getAssignmentDate());
-        assignment.setItem(itemService.findByItemId(entity.getItemId()));
+        Item item = itemService.findByItemId(entity.getItemId());
+        if (item.getStatus() != Status.AVAILABLE) {
+            throw new IllegalArgumentException("Item with name '" + item.getName() + "' is not available for assignment.");
+        }
+        assignment.setItem(item);
+        item.setStatus(Status.ASSIGNED); // Update the item's status to ASSIGNED
+        itemService.saveItem(item); // Save the updated item status
         assignment.setCollector(collector);
-
+        collector.getAssignments().add(assignment); // Add the assignment to the collector's list
+        collectorService.saveCollector(collector); // Save the updated collector
+        
         return new ResponseEntity<>(
             assembler.toModel(assignmentService.saveAssignment(assignment)),
         HttpStatus.CREATED);
@@ -96,6 +108,7 @@ public class AssignmentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAssignment(@PathVariable UUID id) {
         // This method would typically use the assignmentService to delete the assignment by ID
+
         assignmentService.deleteAssignment(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Return 204 No Content status after deletion
     }
