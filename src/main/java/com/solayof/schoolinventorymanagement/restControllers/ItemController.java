@@ -90,6 +90,8 @@ public class ItemController {
             // If the status is not recognized, throw an exception
                 throw new IllegalArgumentException("Invalid status: " + entity.getStatus());
         }
+        category.getItems().add(item); // Add the item to the category's list of items
+        categoryService.saveCategory(category); // Save the updated category with the new item
         // Save the item and return it as an EntityModel<ItemDTO>
         // The assembler converts the Item entity to an EntityModel<ItemDTO>
         return new ResponseEntity<>(
@@ -107,7 +109,7 @@ public class ItemController {
      * @throws ItemNotFoundException if the item with the specified ID does not exist
      */
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<ItemDTO>> getOne(UUID id) {
+    public ResponseEntity<EntityModel<ItemDTO>> getOne(@PathVariable UUID id) {
         // This method would typically use the ItemService to find the item by ID and return it as an EntityModel<Item>
         Item item = itemService.findByItemId(id);
         return new ResponseEntity<>(
@@ -141,7 +143,7 @@ public class ItemController {
      * This method is not implemented yet, but it will accept a UpdateItemDTO and return an
      * 
      */
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<EntityModel<ItemDTO>> updateItem(@PathVariable UUID id, @Valid @RequestBody UpdateItemDTO entity) {
         Item item = itemService.findByItemId(id);
         // Update properties of the item from the DTO
@@ -175,7 +177,7 @@ public class ItemController {
      * @return Collection<EntityModel<Item>> containing items in the specified categories and links
      */
     @GetMapping("/categories")
-    public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByCategoryIds(List<UUID> categoryIds) {
+    public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByCategoryIds(@RequestBody List<UUID> categoryIds) {
         // This method would typically use the ItemService to find items by category IDs and return them as a collection of EntityModel<Item>
         List<Item> items = itemService.findByCategoryIdIn(categoryIds);
         return new ResponseEntity<>(
@@ -196,20 +198,20 @@ public class ItemController {
      * @param name the string to search for in item names
      * @return Collection<EntityModel<Item>> containing items in the specified categories and containing the specified name and links
      */
-    @GetMapping("/categories/name")
-    public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByCategoryIdsAndName(List<UUID> categoryIds, String name) {
-        // This method would typically use the ItemService to find items by category IDs and name containing a specific string
-        List<Item> items = itemService.findByCategoryIdInAndNameContainingIgnoreCase(categoryIds, name);
-        return new ResponseEntity<>(
-            CollectionModel.of(
-                items.stream()
-                    .map(assembler::toModel)
-                    .collect(Collectors.toList()),
-                linkTo(methodOn(ItemController.class).getItemsByCategoryIdsAndName(categoryIds, name)).withSelfRel()
-            ),
-            HttpStatus.OK
-        );
-    }
+    // @GetMapping("/categories/name")
+    // public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByCategoryIdsAndName(List<UUID> categoryIds, String name) {
+    //     // This method would typically use the ItemService to find items by category IDs and name containing a specific string
+    //     List<Item> items = itemService.findByCategoryIdInAndNameContainingIgnoreCase(categoryIds, name);
+    //     return new ResponseEntity<>(
+    //         CollectionModel.of(
+    //             items.stream()
+    //                 .map(assembler::toModel)
+    //                 .collect(Collectors.toList()),
+    //             linkTo(methodOn(ItemController.class).getItemsByCategoryIdsAndName(categoryIds, name)).withSelfRel()
+    //         ),
+    //         HttpStatus.OK
+    //     );
+    // }
 
     /**
      * Retrieves items by their status.
