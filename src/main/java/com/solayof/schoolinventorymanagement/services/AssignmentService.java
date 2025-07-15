@@ -1,11 +1,16 @@
 package com.solayof.schoolinventorymanagement.services;
 
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.solayof.schoolinventorymanagement.constants.Status;
 import com.solayof.schoolinventorymanagement.entity.Assignment;
+import com.solayof.schoolinventorymanagement.entity.Collector;
+import com.solayof.schoolinventorymanagement.entity.Item;
+import com.solayof.schoolinventorymanagement.entity.Reminder;
 import com.solayof.schoolinventorymanagement.exceptions.AssignmentNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.AssignmentRepository;
 
@@ -13,6 +18,10 @@ import com.solayof.schoolinventorymanagement.repository.AssignmentRepository;
 public class AssignmentService {
     @Autowired
     private AssignmentRepository assignmentRepository; // Injecting the AssignmentRepository to interact with assignments
+    @Autowired
+    private CollectorService collectorService; // Injecting the CollectorService to handle collector-related operations
+    @Autowired
+    private ItemService itemService; // Injecting the ItemService to handle item-related operations
 
     /**
      * Saves an assignment to the repository.
@@ -36,6 +45,22 @@ public class AssignmentService {
     }
 
     public void deleteAssignment(UUID id) {
-        assignmentRepository.delete(findByAssignmentId(id));
+        Assignment assignment = findByAssignmentId(id);
+        Collector collector = assignment.getCollector();
+        Set<Reminder> reminders = assignment.getReminders();
+        for (Reminder reminder: reminders) {
+            assignment.getReminders().remove(reminder); // delete reminder
+        }
+        saveAssignment(assignment); // save the assignment to effect the removal of the reminder from the database
+        assignment = findByAssignmentId(id); // Reload the assignment to avoid detached object
+        collector.getAssignments().remove(assignment); // Remove the assignment from the collector's list
+        Item item = assignment.getItem();
+        item.setAssignment(null); // Clear the assignment reference in the item
+        item.setStatus(Status.AVAILABLE); // Update the item's status to AVAILABLE
+        itemService.saveItem(item); // Save the updated item status
+        // Update the collector in the database
+        // Removing an assigment from a collector automatically delete assignment
+        collectorService.saveCollector(collector); // 
+        
     }
 }
