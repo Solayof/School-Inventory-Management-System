@@ -9,4 +9,5 @@ import com.solayof.schoolinventorymanagement.entity.Collector;
 
 public interface CollectorRepository extends JpaRepository<Collector, UUID> {
     Optional<Collector> findByEmail(String email);
+    boolean existsByEmail(String email);
 }
