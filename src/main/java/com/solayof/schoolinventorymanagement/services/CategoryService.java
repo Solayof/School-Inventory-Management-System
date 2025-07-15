@@ -61,7 +61,7 @@ public class CategoryService {
      */
     public Category saveCategory(Category category) {
         Optional<Category> existingCategory = categoryRepository.findByName(category.getName());
-        if (existingCategory.isPresent()) {
+        if (existingCategory.isPresent() && !existingCategory.get().getId().equals(category.getId())) {
             throw new IllegalArgumentException("Category with name '" + category.getName() + "' already exists.");
         }
         return categoryRepository.save(category);
