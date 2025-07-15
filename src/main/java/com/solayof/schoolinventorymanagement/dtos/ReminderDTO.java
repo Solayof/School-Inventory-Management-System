@@ -7,7 +7,6 @@ import java.util.UUID;
 import com.solayof.schoolinventorymanagement.entity.Reminder;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class ReminderDTO {
@@ -24,10 +23,7 @@ public class ReminderDTO {
    private Instant sentAt;
    private Instant createdAt;
    private Instant updatedAt;
-    @NotNull(message = "Assignment ID cannot be null")
-    @Size(max = 36, message = "Assignment ID must be a valid UUID")
-    @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", 
-                message = "Invalid UUID format for Assignment ID")
+    @NotNull(message = "Assignment ID cannot be null") 
    private UUID assignmentId;
 
    public void setId(UUID id) {
