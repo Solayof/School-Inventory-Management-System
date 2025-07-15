@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.solayof.schoolinventorymanagement.constants.ReminderStatus;
 import com.solayof.schoolinventorymanagement.dtos.ReminderDTO;
 import com.solayof.schoolinventorymanagement.dtos.UpdateReminderDTO;
+import com.solayof.schoolinventorymanagement.entity.Assignment;
 import com.solayof.schoolinventorymanagement.entity.Reminder;
 import com.solayof.schoolinventorymanagement.modelAssembler.ReminderModelAssembler;
+import com.solayof.schoolinventorymanagement.services.AssignmentService;
 import com.solayof.schoolinventorymanagement.services.ReminderService;
 
 import jakarta.validation.Valid;
@@ -29,6 +31,9 @@ public class ReminderController {
     private ReminderService reminderService;
     @Autowired
     private ReminderModelAssembler reminderModelAssembler;
+
+    @Autowired
+    private AssignmentService assignmentService;
 
     /**
      * Retrieves a reminder by its ID.
@@ -51,11 +56,15 @@ public class ReminderController {
      */
     @PostMapping("")
     public ResponseEntity<EntityModel<ReminderDTO>> createItem(@Valid @RequestBody ReminderDTO entity) {
+        Assignment assignment = assignmentService.findByAssignmentId(entity.getAssignmentId());
         Reminder reminder = new Reminder(); // Create a new Reminder entity from the DTO
         // Set properties of the reminder from the DTO
         reminder.setMessage(entity.getMessage());
         reminder.setStatus(entity.getStatus());
         reminder.setReminderDate(entity.getReminderDate());
+        reminder.setAssignment(assignment);
+        assignment.getReminders().add(reminder);
+        assignmentService.saveAssignment(assignment);
         return new ResponseEntity<>(reminderModelAssembler.toModel(reminderService.saveReminder(reminder)), HttpStatus.CREATED);
     }
 
