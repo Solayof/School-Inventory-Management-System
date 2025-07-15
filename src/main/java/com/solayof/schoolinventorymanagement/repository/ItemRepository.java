@@ -11,4 +11,7 @@ public interface ItemRepository extends JpaRepository<Item, UUID> {
     Optional<Item> findByName(String name);
     Optional<Item> findBySerialNumber(String serialNumber);
     Optional<Item> findByCategoryId(UUID categoryId);
+    Boolean existsBySerialNumber(String serialNumber);
+    Boolean existsByName(String name);
+    
 }
