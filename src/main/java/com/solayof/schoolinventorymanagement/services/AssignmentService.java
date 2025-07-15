@@ -34,4 +34,8 @@ public class AssignmentService {
         return assignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new AssignmentNotFoundException("Assignment not found with id: " + assignmentId));
     }
+
+    public void deleteAssignment(UUID id) {
+        assignmentRepository.delete(findByAssignmentId(id));
+    }
 }
