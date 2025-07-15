@@ -9,23 +9,31 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import com.solayof.schoolinventorymanagement.constants.Status;
+import com.solayof.schoolinventorymanagement.dtos.AssignmentDTO;
 import com.solayof.schoolinventorymanagement.dtos.ItemDTO;
+import com.solayof.schoolinventorymanagement.dtos.UpdateItemDTO;
 import com.solayof.schoolinventorymanagement.entity.Category;
 import com.solayof.schoolinventorymanagement.entity.Item;
+import com.solayof.schoolinventorymanagement.modelAssembler.AssignmentModelAssembler;
 import com.solayof.schoolinventorymanagement.modelAssembler.ItemModelAssembler;
 import com.solayof.schoolinventorymanagement.services.CategoryService;
 import com.solayof.schoolinventorymanagement.services.ItemService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 
 @RestController
+@RequestMapping("/items") // Base URL for all item-related endpoints
 public class ItemController {
     @Autowired
     private ItemService itemService; // Injecting the ItemService to handle item-related operations
@@ -34,7 +42,9 @@ public class ItemController {
 
     @Autowired
     private CategoryService categoryService; // Injecting the CategoryService to handle category-related operations
-
+    @Autowired
+    private AssignmentModelAssembler assignmentAssembler; // Injecting the AssignmentModelAssebler to conver Assignment enties to EntityModel<AssignmentDTO>
+    
 
     /**
      * creates a new item.
@@ -125,6 +135,25 @@ public class ItemController {
             HttpStatus.OK
         );
     }
+
+    /**
+     * Updates an item.
+     * This method is not implemented yet, but it will accept a UpdateItemDTO and return an
+     * 
+     */
+    @PutMapping("/{id}/update")
+    public ResponseEntity<EntityModel<ItemDTO>> updateItem(@PathVariable UUID id, @Valid @RequestBody UpdateItemDTO entity) {
+        Item item = itemService.findByItemId(id);
+        // Update properties of the item from the DTO
+        if (entity.getName() != null) {
+            item.setName(entity.getName());
+        }
+        if (entity.getDescription() != null) {
+            item.setDescription(entity.getDescription());
+        
+        }
+        return ResponseEntity.ok(assembler.toModel(itemService.saveItem(item)));
+    }
     
     /**
      * Deletes an item by its ID.
@@ -132,14 +161,105 @@ public class ItemController {
      * @param id the UUID of the item to delete
      * @throws ItemNotFoundException if the item with the specified ID does not exist
      */
-    @PostMapping("/{id}/delete")
-    public ResponseEntity<Void> deleteItem(UUID id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteItem(@PathVariable UUID id) {
         // This method would typically use the ItemService to delete the item by ID
         itemService.deleteItem(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Return 204 No Content status after deletion
     }
     
     /**
-     * Updates an existing item.
+     * Retrieves items by their category IDs.
+     * This method is not implemented in this snippet, but it would typically return a collection of EntityModel<Item> for items in the specified categories.
+     * @param categoryIds the list of category IDs to retrieve items from
+     * @return Collection<EntityModel<Item>> containing items in the specified categories and links
      */
+    @GetMapping("/categories")
+    public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByCategoryIds(List<UUID> categoryIds) {
+        // This method would typically use the ItemService to find items by category IDs and return them as a collection of EntityModel<Item>
+        List<Item> items = itemService.findByCategoryIdIn(categoryIds);
+        return new ResponseEntity<>(
+            CollectionModel.of(
+                items.stream()
+                    .map(assembler::toModel)
+                    .collect(Collectors.toList()),
+                linkTo(methodOn(ItemController.class).getItemsByCategoryIds(categoryIds)).withSelfRel()
+            ),
+            HttpStatus.OK
+        );
+    }
+
+    /**
+     * Retrieves items by their category IDs and name containing a specific string.
+     * This method is not implemented in this snippet, but it would typically return a collection of EntityModel<Item> for items in the specified categories and containing the specified name.
+     * @param categoryIds the list of category IDs to retrieve items from
+     * @param name the string to search for in item names
+     * @return Collection<EntityModel<Item>> containing items in the specified categories and containing the specified name and links
+     */
+    @GetMapping("/categories/name")
+    public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByCategoryIdsAndName(List<UUID> categoryIds, String name) {
+        // This method would typically use the ItemService to find items by category IDs and name containing a specific string
+        List<Item> items = itemService.findByCategoryIdInAndNameContainingIgnoreCase(categoryIds, name);
+        return new ResponseEntity<>(
+            CollectionModel.of(
+                items.stream()
+                    .map(assembler::toModel)
+                    .collect(Collectors.toList()),
+                linkTo(methodOn(ItemController.class).getItemsByCategoryIdsAndName(categoryIds, name)).withSelfRel()
+            ),
+            HttpStatus.OK
+        );
+    }
+
+    /**
+     * Retrieves items by their status.
+     * This method is not implemented in this snippet, but it would typically return a collection of EntityModel<Item> for items with the specified status.
+     * @param status the status of the items to retrieve
+     * @return Collection<EntityModel<Item>> containing items with the specified status and links
+     */
+    @GetMapping("/status")
+    public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByStatus(Status status) {
+        // This method would typically use the ItemService to find items by status and return them as a collection of EntityModel<Item>
+        List<Item> items = itemService.findByStatus(status);
+        return new ResponseEntity<>(
+            CollectionModel.of(
+                items.stream()
+                    .map(assembler::toModel)
+                    .collect(Collectors.toList()),
+                linkTo(methodOn(ItemController.class).getItemsByStatus(status)).withSelfRel()
+            ),
+            HttpStatus.OK
+        );
+    }
+
+    /**
+     * Retrieves items by their name containing a specific string.
+     * This method is not implemented in this snippet, but it would typically return a collection of EntityModel<Item> for items containing the specified name.
+     * @param name the string to search for in item names
+     * @return Collection<EntityModel<Item>> containing items with names containing the specified string and links
+     */
+    @GetMapping("/name")
+    public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByName(String name) {
+        // This method would typically use the ItemService to find items by name containing a specific string
+        List<Item> items = itemService.findByNameContainingIgnoreCase(name);
+        return new ResponseEntity<>(
+            CollectionModel.of(
+                items.stream()
+                    .map(assembler::toModel)
+                    .collect(Collectors.toList()),
+                linkTo(methodOn(ItemController.class).getItemsByName(name)).withSelfRel()
+            ),
+            HttpStatus.OK
+        );
+    }
+
+    /**
+     * 
+     */
+    @GetMapping("/{id}/assgnment")
+    public ResponseEntity<EntityModel<AssignmentDTO>> getItemAssignment(@PathVariable UUID id) {
+        Item item = itemService.findByCategoryId(id);
+        // if (item.getAssignment() == null) throw new AssignmentNotFoundException("item: " + item.getName() + " has no assignment");
+        return new ResponseEntity<>(assignmentAssembler.toModel(item.getAssignment()), HttpStatus.OK);
+    }
 }
