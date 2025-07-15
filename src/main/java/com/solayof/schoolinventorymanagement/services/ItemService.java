@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.solayof.schoolinventorymanagement.constants.Status;
 import com.solayof.schoolinventorymanagement.entity.Item;
 import com.solayof.schoolinventorymanagement.exceptions.ItemNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.ItemRepository;
@@ -123,6 +124,47 @@ public class ItemService {
     public void deleteItem(UUID itemId) {
         Item item = findByItemId(itemId);
         itemRepository.delete(item);
+    }
+
+    /**
+     * Finds items by their category IDs.
+     *
+     * @param categoryIds the list of category IDs to find items in
+     * @return a list of Item entities that belong to the specified categories
+     */
+    public List<Item> findByCategoryIdIn(List<UUID> categoryIds) {
+        return itemRepository.findByCategoryIdIn(categoryIds);
+    }
+
+    /**
+     * Finds items by their category IDs and name containing a specific string.
+     *
+     * @param categoryIds the list of category IDs to find items in
+     * @param name the string to search for in item names
+     * @return a list of Item entities that belong to the specified categories and contain the specified name
+     */
+    public List<Item> findByCategoryIdInAndNameContainingIgnoreCase(List<UUID> categoryIds, String name) {
+        return itemRepository.findByCategoryIdInAndNameContainingIgnoreCase(categoryIds, name);
+    }
+
+    /**
+     * Finds items by their status.
+     *
+     * @param status the status of the items to find
+     * @return a list of Item entities with the specified status
+     */
+    public List<Item> findByStatus(Status status) {
+        return itemRepository.findByStatus(status);
+    }
+
+    /**
+     * Finds items by their name containing a specific string.
+     *
+     * @param name the string to search for in item names
+     * @return a list of Item entities that contain the specified name
+     */
+    public List<Item> findByNameContainingIgnoreCase(String name) {
+        return itemRepository.findByNameContainingIgnoreCase(name);
     }
 
 }
