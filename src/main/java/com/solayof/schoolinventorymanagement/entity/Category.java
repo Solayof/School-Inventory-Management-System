@@ -4,13 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import com.solayof.schoolinventorymanagement.constants.CategoryName;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,8 +32,7 @@ public class Category {
     private UUID id;
 
     @Column(name = "name", nullable = false, unique = true) // Column for category name, must be unique and not null
-    @Enumerated(EnumType.STRING) // Maps the enum to a string in the database
-    private CategoryName name; // Category name
+    private String name; // Category name
 
     @Column(name = "description", columnDefinition = "TEXT") // Column for category description, allows for longer text
     private String description; // Category description
@@ -48,5 +43,16 @@ public class Category {
     // orphanRemoval = true means if an item is removed from this category's items set, it will be deleted
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Item> items = new HashSet<>(); // Initialize to prevent NullPointerException
+
+    /**
+     * Constructor to create a Category with name and description.
+     *
+     * @param name        the name of the category
+     * @param description the description of the category
+     */
+    public Category(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 
 }
