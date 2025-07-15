@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.solayof.schoolinventorymanagement.constants.ReminderStatus;
+import com.solayof.schoolinventorymanagement.entity.Assignment;
 import com.solayof.schoolinventorymanagement.entity.Reminder;
 import com.solayof.schoolinventorymanagement.exceptions.ReminderNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.ReminderRepository;
@@ -54,6 +55,8 @@ public class ReminderService {
      * @return void
      */
     public void deleteReminder(UUID id) {
-        reminderRepository.delete(findByReminderId(id));
+        Reminder reminder = findByReminderId(id);
+        Assignment assignment = reminder.getAssignment();
+        assignment.getReminders().remove(reminder);
     }
 }
