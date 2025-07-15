@@ -47,4 +47,13 @@ public class ReminderService {
         return reminderRepository.findById(reminderId)
                 .orElseThrow(() -> new ReminderNotFoundException("Reminder not found with id: " + reminderId));
     }
+
+    /**
+     * Deletes a reminder by its ID.
+     * @param id the ID of the reminder to delete
+     * @return void
+     */
+    public void deleteReminder(UUID id) {
+        reminderRepository.delete(findByReminderId(id));
+    }
 }
