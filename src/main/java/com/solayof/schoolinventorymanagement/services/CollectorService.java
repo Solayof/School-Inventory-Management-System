@@ -1,5 +1,6 @@
 package com.solayof.schoolinventorymanagement.services;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,16 @@ public class CollectorService {
     }
 
     /**
+     * Checks if a collector exists by their email.
+     *
+     * @param email the email of the collector to check
+     * @return true if a collector with the given email exists, false otherwise
+     */
+    public boolean existsByEmail(String email) {
+        return collectorRepository.existsByEmail(email);
+    }
+
+    /**
      * Saves a collector to the repository.
      *
      * @param collector the Collector entity to save
@@ -45,5 +56,24 @@ public class CollectorService {
      */
     public Collector saveCollector(Collector collector) {
         return collectorRepository.save(collector);
+    }
+
+    /**
+     * Deletes a collector by their ID.
+     *
+     * @param collectorId the ID of the collector to delete
+     */
+    public void deleteCollector(UUID collectorId) {
+        Collector collector = findByCollectorId(collectorId);
+        collectorRepository.delete(collector);
+    }
+
+    /**
+     * Retrieves all collectors.
+     *
+     * @return an iterable of all Collector entities
+     */
+    public List<Collector> findAll() {
+        return collectorRepository.findAll();
     }
 }
