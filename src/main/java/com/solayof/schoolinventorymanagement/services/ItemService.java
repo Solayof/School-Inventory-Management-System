@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.solayof.schoolinventorymanagement.constants.Status;
+import com.solayof.schoolinventorymanagement.entity.Category;
 import com.solayof.schoolinventorymanagement.entity.Item;
 import com.solayof.schoolinventorymanagement.exceptions.ItemNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.ItemRepository;
@@ -15,6 +16,8 @@ import com.solayof.schoolinventorymanagement.repository.ItemRepository;
 public class ItemService {
     @Autowired // Using Spring's @Autowired to inject the ItemRepository
     private ItemRepository itemRepository; // Injecting the ItemRepository to interact with the database
+    @Autowired
+    private CategoryService categoryService; // Injecting the CategoryService to handle category-related operations
 
     /**
      * Finds an item by its ID.
@@ -123,7 +126,16 @@ public class ItemService {
      */
     public void deleteItem(UUID itemId) {
         Item item = findByItemId(itemId);
-        itemRepository.delete(item);
+        if (item.getStatus() == Status.ASSIGNED) {
+            throw new IllegalArgumentException("Item with name '" + item.getName() + "'' is not available for deletion.");
+        }
+        Category category = item.getCategory();
+        
+        category.getItems().remove(item); // Remove the item from the category's list of items
+        item.setCategory(null); // Clear the category reference in the item
+        // Removing an item from a category automatically delete item
+        categoryService.saveCategory(category); // Update the category in the database
+
     }
 
     /**
