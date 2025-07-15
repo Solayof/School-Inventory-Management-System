@@ -86,4 +86,13 @@ public class CategoryService {
         categoryRepository.delete(category);
     }
 
+    /**
+     * Finds categories by their name containing a specific string.
+     *
+     * @param name the string to search for in category names
+     * @return a list of Category entities that contain the specified name
+     */
+    public List<Category> findByNameContainingIgnoreCase(String name) {
+        return categoryRepository.findByNameContainingIgnoreCase(name);
+    }
 }
