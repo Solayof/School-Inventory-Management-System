@@ -65,4 +65,20 @@ public class Reminder {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignment_id", nullable = false)
     private Assignment assignment;
+
+    public void setStatus(String staus) {
+        switch (staus) {
+            case "PENDING":
+            this.sentAt = null; // Reset sentAt if status is pending
+            break;
+            case "SENT":
+            case "FAILED":
+            case "DISMISSED":
+            this.sentAt = Instant.now(); // Set sentAt to current time for these statuses
+            break;
+            default:
+            throw new IllegalArgumentException("Invalid status: " + staus);
+        }
+        this.status = ReminderStatus.valueOf(staus.toUpperCase());
+    }
 }
