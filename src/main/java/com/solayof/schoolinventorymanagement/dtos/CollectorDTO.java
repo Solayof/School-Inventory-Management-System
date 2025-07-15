@@ -14,7 +14,8 @@ public class CollectorDTO {
     @NotNull(message = "Contact information cannot be null")
     private String contactInformation; // Contact information for the collector
     @NotNull(message = "Email cannot be null")
-    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "Invalid email format")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", 
+             message = "Email must be a valid email format")
     private String email; // Email of the collector
     private String createdAt; // Creation timestamp of the collector
     private String updatedAt; // Last update timestamp of the collector
