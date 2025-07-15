@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.solayof.schoolinventorymanagement.constants.Status;
+import com.solayof.schoolinventorymanagement.exceptions.AssignmentNotFoundException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -81,4 +82,10 @@ public class Item {
     foreignKeyDefinition = "FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE RESTRICT")) // Ensures that the item cannot be deleted if it is still assigned
     private Assignment assignment; // This field represents the assignment of the item, if any.
     // If the item is not assigned, this field will be null.
+
+    public Assignment getAssignment() {
+        if (this.getAssignment() == null) throw new AssignmentNotFoundException("item: " + this.getName() + " has no assignment");
+        return assignment;
+    }
+
 }
