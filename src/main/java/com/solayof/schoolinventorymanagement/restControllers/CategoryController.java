@@ -220,7 +220,7 @@ public class CategoryController {
         @ApiResponse(responseCode = "200", description = "Categories retrieved successfully"),
         @ApiResponse(responseCode = "404", description = "No categories found")
     })
-    public ResponseEntity<CollectionModel<EntityModel<CategoryDto>>> searchCategoriesByName(@RequestBody String name) {
+    public ResponseEntity<CollectionModel<EntityModel<CategoryDto>>> searchCategoriesByName(String name) {
         // This method would typically use the CategoryService to find categories by name and return them as a collection of EntityModel<Category>
         List<Category> categories = categoryService.findByNameContainingIgnoreCase(name);
         return new ResponseEntity<>(
