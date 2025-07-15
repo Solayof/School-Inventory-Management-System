@@ -38,6 +38,13 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    public Item(String name, String description, String serialNumber, Category category) {
+        this.name = name;
+        this.description = description;
+        this.serialNumber = serialNumber;
+   
+        this.category = category;
+    }
     
     @Column(name = "name", nullable = false, unique = true) // Column for item name, must be unique and not null
     private String name; // Name of the item, must be unique and not null
