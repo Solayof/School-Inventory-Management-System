@@ -5,7 +5,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import com.github.javafaker.Faker;
 import com.solayof.schoolinventorymanagement.constants.ERole;
@@ -17,7 +16,6 @@ import com.solayof.schoolinventorymanagement.services.UserService;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 
 @Service
@@ -93,7 +91,6 @@ public class Setup implements CommandLineRunner {
 
 
         UserEntity superadmin = new UserEntity();
-        superadmin.setCreatedAt(LocalDateTime.now());
         superadmin.setDob(LocalDate.now());
         superadmin.setEmail("solayof@gmail.com");
         superadmin.setGender("Male");
