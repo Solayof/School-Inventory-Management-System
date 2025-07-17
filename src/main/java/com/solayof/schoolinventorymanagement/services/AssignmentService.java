@@ -1,6 +1,5 @@
 package com.solayof.schoolinventorymanagement.services;
 
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import com.solayof.schoolinventorymanagement.constants.Status;
 import com.solayof.schoolinventorymanagement.entity.Assignment;
 import com.solayof.schoolinventorymanagement.entity.Collector;
 import com.solayof.schoolinventorymanagement.entity.Item;
-import com.solayof.schoolinventorymanagement.entity.Reminder;
 import com.solayof.schoolinventorymanagement.exceptions.AssignmentNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.AssignmentRepository;
 
@@ -47,12 +45,7 @@ public class AssignmentService {
     public void deleteAssignment(UUID id) {
         Assignment assignment = findByAssignmentId(id);
         Collector collector = assignment.getCollector();
-        Set<Reminder> reminders = assignment.getReminders();
-        for (Reminder reminder: reminders) {
-            assignment.getReminders().remove(reminder); // delete reminder
-        }
-        saveAssignment(assignment); // save the assignment to effect the removal of the reminder from the database
-        assignment = findByAssignmentId(id); // Reload the assignment to avoid detached object
+        
         collector.getAssignments().remove(assignment); // Remove the assignment from the collector's list
         Item item = assignment.getItem();
         item.setAssignment(null); // Clear the assignment reference in the item
