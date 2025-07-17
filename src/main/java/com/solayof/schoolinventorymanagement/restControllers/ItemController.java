@@ -25,6 +25,7 @@ import com.solayof.schoolinventorymanagement.dtos.ItemDTO;
 import com.solayof.schoolinventorymanagement.dtos.UpdateItemDTO;
 import com.solayof.schoolinventorymanagement.entity.Category;
 import com.solayof.schoolinventorymanagement.entity.Item;
+import com.solayof.schoolinventorymanagement.exceptions.AssignmentNotFoundException;
 import com.solayof.schoolinventorymanagement.modelAssembler.AssignmentModelAssembler;
 import com.solayof.schoolinventorymanagement.modelAssembler.ItemModelAssembler;
 import com.solayof.schoolinventorymanagement.services.CategoryService;
@@ -75,28 +76,14 @@ public class ItemController {
             entity.getSerialNumber(),
             category
         );
-        // Set the status based on the provided status string
-        switch(entity.getStatus().toUpperCase()) {
-            case "AVAILABLE":
-                item.setStatus(Status.AVAILABLE); // Set the status to AVAILABLE
-                break;
-            case "ASSIGNED":
-                item.setStatus(Status.ASSIGNED); // Set the status to ASSIGNED
-                break;
-            case "RETURNED":
-                item.setStatus(Status.RETURNED); // Set the status to RETURNED
-                break;
-            default:
-            // If the status is not recognized, throw an exception
-                throw new IllegalArgumentException("Invalid status: " + entity.getStatus());
-        }
+        item.setStatus(entity.getStatus());
+        itemService.saveItem(item); // Save the item to the repository
         category.getItems().add(item); // Add the item to the category's list of items
         categoryService.saveCategory(category); // Save the updated category with the new item
         // Save the item and return it as an EntityModel<ItemDTO>
         // The assembler converts the Item entity to an EntityModel<ItemDTO>
         return new ResponseEntity<>(
-            assembler.toModel(
-                itemService.saveItem(item)),
+            assembler.toModel(item),
             HttpStatus.CREATED
         ); // Convert ItemDto to Item entity and create it using the service
     }
@@ -261,7 +248,7 @@ public class ItemController {
     @GetMapping("/{id}/assgnment")
     public ResponseEntity<EntityModel<AssignmentDTO>> getItemAssignment(@PathVariable UUID id) {
         Item item = itemService.findByCategoryId(id);
-        // if (item.getAssignment() == null) throw new AssignmentNotFoundException("item: " + item.getName() + " has no assignment");
+        if (item.getAssignment() == null) throw new AssignmentNotFoundException("item: " + item.getName() + " has no assignment");
         return new ResponseEntity<>(assignmentAssembler.toModel(item.getAssignment()), HttpStatus.OK);
     }
 }
