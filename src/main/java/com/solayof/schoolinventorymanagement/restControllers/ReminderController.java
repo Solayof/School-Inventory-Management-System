@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.solayof.schoolinventorymanagement.constants.ReminderStatus;
 import com.solayof.schoolinventorymanagement.dtos.ReminderDTO;
@@ -25,7 +27,8 @@ import com.solayof.schoolinventorymanagement.services.AssignmentService;
 import com.solayof.schoolinventorymanagement.services.ReminderService;
 
 import jakarta.validation.Valid;
-
+@RestController
+@RequestMapping("/reminders")
 public class ReminderController {
     @Autowired
     private ReminderService reminderService;
@@ -64,8 +67,9 @@ public class ReminderController {
         reminder.setReminderDate(entity.getReminderDate());
         reminder.setAssignment(assignment);
         assignment.getReminders().add(reminder);
+        reminderService.saveReminder(reminder);
         assignmentService.saveAssignment(assignment);
-        return new ResponseEntity<>(reminderModelAssembler.toModel(reminderService.saveReminder(reminder)), HttpStatus.CREATED);
+        return new ResponseEntity<>(reminderModelAssembler.toModel(reminder), HttpStatus.CREATED);
     }
 
     /**
