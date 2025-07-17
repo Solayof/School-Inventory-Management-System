@@ -1,7 +1,6 @@
 package com.solayof.schoolinventorymanagement.restControllers;
 
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -197,46 +196,21 @@ public class AuthController {
        user.setGender(entity.getGender());
        user.setPassword(entity.getPassword());
 
-
-       Set<String> entityRoles = entity.getRoles();
-       Set<RoleEntity> roles = new HashSet<>();
-
-       if (entityRoles == null) {
-        RoleEntity userRole = roleRepository.findByName(ERole.ROLE_USER)
-        .orElseThrow(() -> new RuntimeException("Role not found"));
-        roles.add(userRole);
+       if (entity.getRoles() != null) {
+            Set<RoleEntity> roles = entity.getRoles()
+            .stream()
+            .map(role -> roleRepository.findByName(role)
+            .orElseThrow(() -> new RuntimeException("Role not found")))
+            .collect(Collectors.toSet());
+           user.setRoles(roles);
        } else {
-        entityRoles.forEach(role -> {
-            switch (role) {
-                case "ROLE_ADMIN":
-                    RoleEntity adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                        .orElseThrow(() -> new RuntimeException("Role not found"));
-                    roles.add(adminRole);
-                    break;
-                case "ROLE_USER":
-                    RoleEntity userRole = roleRepository.findByName(ERole.ROLE_USER)
-                        .orElseThrow(() -> new RuntimeException("Role not found"));
-                    roles.add(userRole);
-                    break;
-                case "ROLE_MODERATOR":
-                    RoleEntity mdRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-                        .orElseThrow(() -> new RuntimeException("Role not found"));
-                    roles.add(mdRole);
-                    break;
-                default:
-                    RoleEntity usrRole = roleRepository.findByName(ERole.ROLE_USER)
-                        .orElseThrow(() -> new RuntimeException("Role not found"));
-                    roles.add(usrRole);
-            }
-        });
+            RoleEntity userRole = roleRepository.findByName(ERole.ROLE_MANAGER)
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+        
+           user.setRoles(Set.of(userRole));
        }
 
-       RoleEntity roleRead = roleRepository.findByName(ERole.READ)
-            .orElseThrow(() -> new RuntimeException("Role not found"));
-        roles.add(roleRead);
-
-
-       user.setRoles(roles);
+       
 
        userService.addUser(user);
        Authentication authentication = authenticationManager.authenticate(
