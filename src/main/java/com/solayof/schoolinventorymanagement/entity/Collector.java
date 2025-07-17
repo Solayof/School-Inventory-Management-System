@@ -15,8 +15,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
@@ -55,6 +59,8 @@ public class Collector {
     // One-to-Many relationship with Assignment: one collector can have many assignments
     @OneToMany(mappedBy = "collector", cascade = CascadeType.ALL, orphanRemoval = true) // mappedBy indicates the field in the Assignment entity that owns the relationship
     // CascadeType.ALL means all operations (persist, merge, remove, refresh, detach)
+    @JsonManagedReference
+    @EqualsAndHashCode.Exclude
     private Set<Assignment> assignments = new HashSet<>();
 
     public Collector(String name, String contactInformation, String email) {
