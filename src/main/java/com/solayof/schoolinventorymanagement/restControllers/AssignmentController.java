@@ -74,13 +74,14 @@ public class AssignmentController {
         }
         assignment.setItem(item);
         item.setStatus(Status.ASSIGNED); // Update the item's status to ASSIGNED
-        itemService.saveItem(item); // Save the updated item status
         assignment.setCollector(collector);
         collector.getAssignments().add(assignment); // Add the assignment to the collector's list
+        assignmentService.saveAssignment(assignment);
         collectorService.saveCollector(collector); // Save the updated collector
+        itemService.saveItem(item); // Save the updated item status
         
         return new ResponseEntity<>(
-            assembler.toModel(assignmentService.saveAssignment(assignment)),
+            assembler.toModel(assignment),
         HttpStatus.CREATED);
     }
 
