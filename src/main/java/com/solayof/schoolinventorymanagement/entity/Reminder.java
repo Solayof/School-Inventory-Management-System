@@ -18,10 +18,12 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.solayof.schoolinventorymanagement.constants.ReminderStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
@@ -64,21 +66,9 @@ public class Reminder {
     // Many-to-One relationship with Assignment
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignment_id", nullable = false)
+    @JsonBackReference
+    @EqualsAndHashCode.Exclude
     private Assignment assignment;
 
-    public void setStatus(String staus) {
-        switch (staus) {
-            case "PENDING":
-            this.sentAt = null; // Reset sentAt if status is pending
-            break;
-            case "SENT":
-            case "FAILED":
-            case "DISMISSED":
-            this.sentAt = Instant.now(); // Set sentAt to current time for these statuses
-            break;
-            default:
-            throw new IllegalArgumentException("Invalid status: " + staus);
-        }
-        this.status = ReminderStatus.valueOf(staus.toUpperCase());
-    }
+    
 }
