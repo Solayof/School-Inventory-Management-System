@@ -91,6 +91,8 @@ public class AssignmentDTO {
         assignmentDTO.setActualRetunDate(assignment.getActualReturnDate());
         assignmentDTO.setCreatedAt(assignment.getCreatedAt());
         assignmentDTO.setUpdatedAt(assignment.getUpdatedAt());
+        assignmentDTO.setItemId(assignment.getItem().getId());
+        assignmentDTO.setCollectorId(assignment.getCollector().getId());
         return assignmentDTO;
     }
 }
