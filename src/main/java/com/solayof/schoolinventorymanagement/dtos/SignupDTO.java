@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.solayof.schoolinventorymanagement.constants.ERole;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -38,6 +39,6 @@ public class SignupDTO {
     @NotNull
     private LocalDateTime createdAt;
     private String userType;
-    private Set<String> roles;
+    private Set<ERole> roles;
     
 }
