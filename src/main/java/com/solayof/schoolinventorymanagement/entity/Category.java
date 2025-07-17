@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +17,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -42,6 +46,9 @@ public class Category {
     // CascadeType.ALL means all operations (persist, merge, remove, refresh, detach) will cascade
     // orphanRemoval = true means if an item is removed from this category's items set, it will be deleted
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @JsonManagedReference // Prevents infinite recursion during JSON serialization
     private Set<Item> items = new HashSet<>(); // Initialize to prevent NullPointerException
 
     /**
