@@ -20,7 +20,7 @@ public class ReminderModelAssembler implements RepresentationModelAssembler<Remi
         return EntityModel.of(
             ReminderDTO.fromReminder(reminder),
             linkTo(methodOn(ReminderController.class).getOne(reminder.getId())).withSelfRel(),
-            linkTo(methodOn(ReminderController.class).createItem(ReminderDTO.fromReminder(reminder))).withRel("createItem")
+            linkTo(methodOn(ReminderController.class).createItem(ReminderDTO.fromReminder(reminder))).withRel("createReminder")
         );
     }
 }
