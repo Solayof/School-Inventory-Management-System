@@ -6,8 +6,8 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.solayof.schoolinventorymanagement.constants.Status;
-import com.solayof.schoolinventorymanagement.exceptions.AssignmentNotFoundException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +24,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -71,6 +72,9 @@ public class Item {
     // Many-to-One relationship with Category: many items belong to one category
     @ManyToOne(fetch = FetchType.LAZY) // Lazy loading for performance
     @JoinColumn(name = "category_id", nullable = false) // Foreign key column
+    @JsonBackReference // Prevents infinite recursion during JSON serialization
+    // This annotation is used to handle the bidirectional relationship with Category.
+    @EqualsAndHashCode.Exclude
     private Category category; // This field represents the category to which the item belongs.
 
     // One-to-One relationship with Assignment: one item can have at most one active assignment.
@@ -80,12 +84,9 @@ public class Item {
     @JoinColumn(name = "assignment_id", referencedColumnName = "id",
     foreignKey = @ForeignKey(name = "fk_item_assignment",
     foreignKeyDefinition = "FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE RESTRICT")) // Ensures that the item cannot be deleted if it is still assigned
+    @JsonBackReference
+    @EqualsAndHashCode.Exclude
     private Assignment assignment; // This field represents the assignment of the item, if any.
     // If the item is not assigned, this field will be null.
-
-    public Assignment getAssignment() {
-        if (this.getAssignment() == null) throw new AssignmentNotFoundException("item: " + this.getName() + " has no assignment");
-        return assignment;
-    }
 
 }
