@@ -20,8 +20,13 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -59,14 +64,19 @@ public class Assignment {
     // One-to-One relationship with Item
     @OneToOne(fetch = FetchType.LAZY) // Lazy loading for performance
     @JoinColumn(name = "item_id", nullable = false) // Foreign key column, must not be null
+    @JsonBackReference
     private Item item; // This field represents the item being assigned, must not be null.
 
     // Many-to-One relationship with Collector
     @ManyToOne(fetch = FetchType.LAZY)  // Lazy loading for performance
     @JoinColumn(name = "collector_id", nullable = false) // Foreign key column, must not be null
+    @JsonBackReference
+    @EqualsAndHashCode.Exclude
     private Collector collector; // This field represents the collector to whom the item is assigned, must not be null.
 
     // One-to-Many relationship with Reminder: one assignment can have many reminders
     @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL, orphanRemoval = true) // mappedBy indicates the field in the Reminder entity that owns the relationship
+    @JsonManagedReference
+    @EqualsAndHashCode.Exclude
     private Set<Reminder> reminders = new HashSet<>(); // Initialize to prevent NullPointerException
 }
