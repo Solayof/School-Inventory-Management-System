@@ -2,6 +2,7 @@ package com.solayof.schoolinventorymanagement.dtos;
 
 import java.util.UUID;
 
+import com.solayof.schoolinventorymanagement.constants.Status;
 import com.solayof.schoolinventorymanagement.entity.Item;
 
 import jakarta.validation.constraints.NotNull;
@@ -22,13 +23,12 @@ public class ItemDTO {
     // @Size(min = 36, max = 36, message = "Category ID must be exactly 36 characters long")
     private UUID categoryId;
     @NotNull(message = "Status cannot be null")
-    @Size(max = 10, message = "Status must be at most 10 characters")
-    private String status; // Status of the item, e.g., "AVAILABLE", "ASSIGNED", "RETURNED"
+    private Status status; // Status of the item, e.g., "AVAILABLE", "ASSIGNED", "RETURNED"
 
     public ItemDTO() {
     }
 
-    public ItemDTO(String name, String description, String serialNumber, String status, UUID categoryId) {
+    public ItemDTO(String name, String description, String serialNumber, Status status, UUID categoryId) {
         this.name = name;
         this.description = description;
         this.serialNumber = serialNumber;
@@ -75,10 +75,10 @@ public class ItemDTO {
     public void setCategoryId(UUID categoryId) {
         this.categoryId = categoryId;
     }
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -89,7 +89,7 @@ public class ItemDTO {
         dto.setDescription(item.getDescription());
         dto.setSerialNumber(item.getSerialNumber());
         dto.setCategoryId(item.getCategory().getId());
-        dto.setStatus(item.getStatus().name());
+        dto.setStatus(item.getStatus());
         return dto;
     }
 }
