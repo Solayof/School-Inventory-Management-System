@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import com.solayof.schoolinventorymanagement.constants.ReminderStatus;
 import com.solayof.schoolinventorymanagement.entity.Reminder;
 
 import jakarta.validation.constraints.NotNull;
@@ -12,11 +13,10 @@ import jakarta.validation.constraints.Size;
 public class ReminderDTO {
    private UUID id;
    @NotNull(message = "Reminder date cannot be null")
-   @Size(max = 10, message = "Reminder date must be in the format YYYY-MM-DD")
    private LocalDate reminderDate;
     @NotNull(message = "Status cannot be null")
     @Size(max = 10, message = "Status must be at most 10 characters")
-   private String status;
+   private ReminderStatus status;
     @NotNull(message = "Message cannot be null")
     @Size(max = 500, message = "Message must be at most 500 characters")
    private String message;
@@ -34,11 +34,11 @@ public class ReminderDTO {
     return id;
    }
 
-   public String getStatus() {
+   public ReminderStatus getStatus() {
     return status;
    }
 
-   public void setStatus(String status) {
+   public void setStatus(ReminderStatus status) {
     this.status = status;
    }
 
@@ -87,7 +87,7 @@ public class ReminderDTO {
 
     public ReminderDTO() {
     }
-    public ReminderDTO(UUID id, LocalDate reminderDate, String status, String message, Instant sentAt, Instant createdAt, Instant updatedAt, UUID assignmentId) {
+    public ReminderDTO(UUID id, LocalDate reminderDate, ReminderStatus status, String message, Instant sentAt, Instant createdAt, Instant updatedAt, UUID assignmentId) {
         this.id = id;
         this.reminderDate = reminderDate;
         this.status = status;
@@ -101,7 +101,7 @@ public class ReminderDTO {
         return new ReminderDTO(
             reminder.getId(),
             reminder.getReminderDate(),
-            reminder.getStatus().name(),
+            reminder.getStatus(),
             reminder.getMessage(),
             reminder.getSentAt(),
             reminder.getCreatedAt(),
