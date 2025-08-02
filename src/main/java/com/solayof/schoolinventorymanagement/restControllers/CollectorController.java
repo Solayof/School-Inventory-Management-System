@@ -24,6 +24,9 @@ import com.solayof.schoolinventorymanagement.entity.Collector;
 import com.solayof.schoolinventorymanagement.modelAssembler.CollectorModelAssembler;
 import com.solayof.schoolinventorymanagement.services.CollectorService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
@@ -44,6 +47,12 @@ public class CollectorController {
      * @return EntityModel<CollectorDTO> containing the created collector and links
      */
     @PostMapping("")
+    @Operation(summary = "Create a new collector", description = "Creates a new inventory collector with the provided name and email.")
+     @ApiResponses(value = {
+        // This annotation documents the API responses for Swagger/OpenAPI
+         @ApiResponse(responseCode = "201", description = "Collector created successfully"),
+         @ApiResponse(responseCode = "400", description = "Collector input data")
+     })
     public ResponseEntity<EntityModel<CollectorDTO>> createCollector(@Valid @RequestBody CollectorDTO entity) {
         if (collectorService.existsByEmail(entity.getEmail())) {
             throw new IllegalArgumentException("Collector with email " + entity.getEmail() + " already exists.");
@@ -68,6 +77,11 @@ public class CollectorController {
      * @return EntityModel<CollectorDTO> containing the collector details
      */
     @GetMapping("/{collectorId}")
+    @Operation(summary = "Get a collector by ID", description = "Retrieves an inventory collector by its unique identifier.")
+        @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Collector retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "Collector not found")
+        })
     public ResponseEntity<EntityModel<CollectorDTO>> getOne(@PathVariable UUID collectorId) {
         Collector collector = collectorService.findByCollectorId(collectorId);
         EntityModel<CollectorDTO> model = assembler.toModel(collector);
@@ -111,6 +125,12 @@ public class CollectorController {
      * @return EntityModel<CollectorDTO> containing the updated collector and links
      */
     @PutMapping("/{collectorId}")
+    @Operation(summary = "Update a collector", description = "Updates an existing inventory collector with the provided details.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Collector updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+        @ApiResponse(responseCode = "404", description = "Collector not found")
+    })
     public ResponseEntity<EntityModel<CollectorDTO>> updateCollector(@PathVariable UUID collectorId, @Valid @RequestBody UpdateCollectorDTO entity) {
         Collector collector = collectorService.findByCollectorId(collectorId);
         if (entity.getEmail() != null && collectorService.existsByEmail(entity.getEmail())) {
