@@ -26,6 +26,9 @@ import com.solayof.schoolinventorymanagement.modelAssembler.ReminderModelAssembl
 import com.solayof.schoolinventorymanagement.services.AssignmentService;
 import com.solayof.schoolinventorymanagement.services.ReminderService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/reminders")
@@ -45,6 +48,11 @@ public class ReminderController {
      * @return the EntityModel of the ReminderDTO
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Get a reminder by ID", description = "Retrieves an inventory reminder by its unique identifier.")
+        @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "reminder retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "reminder not found")
+        })
     public ResponseEntity<EntityModel<ReminderDTO>> getOne(@PathVariable UUID id) {
         Reminder reminder = reminderService.findByReminderId(id);
         return ResponseEntity.ok(reminderModelAssembler.toModel(reminder));
@@ -58,6 +66,12 @@ public class ReminderController {
      * @return ResponseEntity with the created reminder
      */
     @PostMapping("")
+    @Operation(summary = "Create a new reminder", description = "Creates a new inventory reminder with the provided details.")
+     @ApiResponses(value = {
+        // This annotation documents the API responses for Swagger/OpenAPI
+         @ApiResponse(responseCode = "201", description = "Item created successfully"),
+         @ApiResponse(responseCode = "400", description = "Invalid input data")
+     })
     public ResponseEntity<EntityModel<ReminderDTO>> createItem(@Valid @RequestBody ReminderDTO entity) {
         Assignment assignment = assignmentService.findByAssignmentId(entity.getAssignmentId());
         Reminder reminder = new Reminder(); // Create a new Reminder entity from the DTO
@@ -80,6 +94,11 @@ public class ReminderController {
      * @return ResponseEntity with a collection of reminders
      */
     @GetMapping("/status/{status}")
+    @Operation(summary = "Get all reminders whose status is prvided in the path", description = "Retrieves all inventory reminders whose status is prvided in the path.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Reminders retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "No reminders found")
+    })
     public ResponseEntity<CollectionModel<EntityModel<ReminderDTO>>> getByStatus(@PathVariable ReminderStatus status) {
         List<Reminder> reminders = reminderService.findByStatus(status);
         return ResponseEntity.ok(reminderModelAssembler.toCollectionModel(reminders));
@@ -90,7 +109,13 @@ public class ReminderController {
      * This method is not implemented yet, but it will accept a ReminderDTO and return an
      * 
      */
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
+    @Operation(summary = "Update a reminder", description = "Updates an existing inventory reminder with the provided details.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Reminder updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+        @ApiResponse(responseCode = "404", description = "Reminder not found")
+    })
     public ResponseEntity<EntityModel<ReminderDTO>> updateReminder(@PathVariable UUID id, @Valid @RequestBody UpdateReminderDTO entity) {
         Reminder reminder = reminderService.findByReminderId(id);
         // Update properties of the reminder from the DTO
@@ -114,6 +139,11 @@ public class ReminderController {
      * @return ResponseEntity with HTTP status 204 (No Content) after deletion
      */
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a reminder", description = "Deletes an inventory reminder by its unique identifier.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Reminder deleted successfully"),
+        @ApiResponse(responseCode = "404", description = "Reminder not found")
+    })
     public ResponseEntity<Void> deleteReminder(@PathVariable UUID id) {
         reminderService.deleteReminder(id);
         return ResponseEntity.noContent().build(); // Return HTTP status 204 (No Content) after deletion
