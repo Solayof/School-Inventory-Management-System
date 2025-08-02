@@ -11,6 +11,8 @@ import com.solayof.schoolinventorymanagement.entity.Category;
 import com.solayof.schoolinventorymanagement.exceptions.CategoryNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.CategoryRepository;
 
+import jakarta.transaction.Transactional;
+
 /**
  * Service class for managing categories in the school inventory management system.
  * Provides methods to find and save categories.
@@ -59,6 +61,7 @@ public class CategoryService {
      * @param category the Category entity to save
      * @return the saved Category entity
      */
+    @Transactional // Using @Transactional to ensure the operation is atomic
     public Category saveCategory(Category category) {
         Optional<Category> existingCategory = categoryRepository.findByName(category.getName());
         if (existingCategory.isPresent() && !existingCategory.get().getId().equals(category.getId())) {
