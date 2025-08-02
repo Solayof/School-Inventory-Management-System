@@ -1,5 +1,7 @@
 package com.solayof.schoolinventorymanagement.restControllers;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.solayof.schoolinventorymanagement.constants.Status;
@@ -136,5 +139,25 @@ public class AssignmentController {
 
         assignmentService.deleteAssignment(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Return 204 No Content status after deletion
+    }
+
+    @GetMapping("/overdue")
+    public ResponseEntity<List<Assignment>> getOverdueAssignments() {
+        List<Assignment> overdueAssignments = assignmentService.getOverdueAssignments();
+        return ResponseEntity.ok(overdueAssignments);
+    }
+
+    @PutMapping("/{id}/return")
+    public ResponseEntity<Assignment> returnItem(@PathVariable UUID id) {
+        Assignment returnedAssignment = assignmentService.returnItem(id);
+        return ResponseEntity.ok(returnedAssignment);
+    }
+
+    @PutMapping("/{id}/update-due-date")
+    public ResponseEntity<Assignment> updateAssignmentDueDate(
+            @PathVariable UUID id,
+            @RequestParam LocalDate newReturnDueDate) {
+        Assignment updatedAssignment = assignmentService.updateAssignment(id, newReturnDueDate);
+        return ResponseEntity.ok(updatedAssignment);
     }
 }
