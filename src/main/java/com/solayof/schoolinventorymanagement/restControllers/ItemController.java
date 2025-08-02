@@ -31,6 +31,9 @@ import com.solayof.schoolinventorymanagement.modelAssembler.ItemModelAssembler;
 import com.solayof.schoolinventorymanagement.services.CategoryService;
 import com.solayof.schoolinventorymanagement.services.ItemService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
@@ -57,6 +60,12 @@ public class ItemController {
      * 
      */
     @PostMapping("")
+    @Operation(summary = "Create a new item", description = "Creates a new inventory item with the provided name and description.")
+     @ApiResponses(value = {
+        // This annotation documents the API responses for Swagger/OpenAPI
+         @ApiResponse(responseCode = "201", description = "Item created successfully"),
+         @ApiResponse(responseCode = "400", description = "Invalid input data")
+     })
     public ResponseEntity<EntityModel<ItemDTO>> createItem(@Valid @RequestBody ItemDTO entity) {
         // Check if the category exists
         if (!categoryService.existsById(entity.getCategoryId())) {
@@ -96,6 +105,11 @@ public class ItemController {
      * @throws ItemNotFoundException if the item with the specified ID does not exist
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Get an item by ID", description = "Retrieves an inventory item by its unique identifier.")
+        @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Item retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "Item not found")
+        })
     public ResponseEntity<EntityModel<ItemDTO>> getOne(@PathVariable UUID id) {
         // This method would typically use the ItemService to find the item by ID and return it as an EntityModel<Item>
         Item item = itemService.findByItemId(id);
@@ -111,6 +125,11 @@ public class ItemController {
      * @return Collection<EntityModel<Item>> containing all items and links
      */
     @GetMapping("")
+    @Operation(summary = "Get all items", description = "Retrieves all inventory items.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Items retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "No items found")
+    })
     public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getAll() {
         // This method would typically use the ItemService to find all items and return them as a collection of EntityModel<Item>
         List<Item> items = itemService.findAllItems();
@@ -131,6 +150,12 @@ public class ItemController {
      * 
      */
     @PutMapping("/{id}")
+    @Operation(summary = "Update an item", description = "Updates an existing inventory item with the provided details.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Item updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+        @ApiResponse(responseCode = "404", description = "Item not found")
+    })
     public ResponseEntity<EntityModel<ItemDTO>> updateItem(@PathVariable UUID id, @Valid @RequestBody UpdateItemDTO entity) {
         Item item = itemService.findByItemId(id);
         // Update properties of the item from the DTO
@@ -151,6 +176,11 @@ public class ItemController {
      * @throws ItemNotFoundException if the item with the specified ID does not exist
      */
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete an item", description = "Deletes an inventory item by its unique identifier.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Item deleted successfully"),
+        @ApiResponse(responseCode = "404", description = "Item not found")
+    })
     public ResponseEntity<Void> deleteItem(@PathVariable UUID id) {
         // This method would typically use the ItemService to delete the item by ID
         itemService.deleteItem(id);
@@ -164,6 +194,11 @@ public class ItemController {
      * @return Collection<EntityModel<Item>> containing items in the specified categories and links
      */
     @GetMapping("/categories")
+    @Operation(summary = "Get all items whose IDs of categroies are provide in a list in the request body", description = "Retrieves all inventory items.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Items retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "No items found")
+    })
     public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByCategoryIds(@RequestBody List<UUID> categoryIds) {
         // This method would typically use the ItemService to find items by category IDs and return them as a collection of EntityModel<Item>
         List<Item> items = itemService.findByCategoryIdIn(categoryIds);
@@ -207,6 +242,11 @@ public class ItemController {
      * @return Collection<EntityModel<Item>> containing items with the specified status and links
      */
     @GetMapping("/status")
+    @Operation(summary = "Get all items whose status is provided in query params", description = "Retrieves all inventory items.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Items retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "No items found")
+    })
     public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByStatus(Status status) {
         // This method would typically use the ItemService to find items by status and return them as a collection of EntityModel<Item>
         List<Item> items = itemService.findByStatus(status);
@@ -228,6 +268,11 @@ public class ItemController {
      * @return Collection<EntityModel<Item>> containing items with names containing the specified string and links
      */
     @GetMapping("/name")
+    @Operation(summary = "Get all items whose name containing string provided in the query params", description = "Retrieves all inventory items.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Items retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "No items found")
+    })
     public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByName(String name) {
         // This method would typically use the ItemService to find items by name containing a specific string
         List<Item> items = itemService.findByNameContainingIgnoreCase(name);
@@ -243,9 +288,16 @@ public class ItemController {
     }
 
     /**
-     * 
+     * Retrieves an item assignmentby the ID of the item
+     * @param id the id of the item whose assignment is requested for
+     * @return EntityModel<AssignmentDTO>
      */
     @GetMapping("/{id}/assgnment")
+    @Operation(summary = "Get an item assignment by item ID", description = "Retrieves an inventory item assignment by its unique identifier.")
+        @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Assignment retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "Assignment not found")
+        })
     public ResponseEntity<EntityModel<AssignmentDTO>> getItemAssignment(@PathVariable UUID id) {
         Item item = itemService.findByCategoryId(id);
         if (item.getAssignment() == null) throw new AssignmentNotFoundException("item: " + item.getName() + " has no assignment");
