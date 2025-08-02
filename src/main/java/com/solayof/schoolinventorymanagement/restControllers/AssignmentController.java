@@ -26,6 +26,9 @@ import com.solayof.schoolinventorymanagement.services.AssignmentService;
 import com.solayof.schoolinventorymanagement.services.CollectorService;
 import com.solayof.schoolinventorymanagement.services.ItemService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
@@ -48,9 +51,13 @@ public class AssignmentController {
      * @return EntityModel<AssignmentDTO> containing the assignment details and links
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Get an assignment by ID", description = "Retrieves an inventory assignment by its unique identifier.")
+        @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Assignment retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "Assignment not found")
+        })
     public EntityModel<AssignmentDTO> getOne(@PathVariable UUID id) {
-        Assignment assignment = assignmentService.findByAssignmentId(id);
-        return assembler.toModel(assignment);
+        return assembler.toModel(assignmentService.findByAssignmentId(id));
     }
 
     /**
@@ -60,6 +67,12 @@ public class AssignmentController {
      * @return EntityModel<AssignmentDTO> containing the created assignment and links
      */
     @PostMapping("")
+    @Operation(summary = "Create a new assignment", description = "Creates a new inventory item with the provided name and description.")
+     @ApiResponses(value = {
+        // This annotation documents the API responses for Swagger/OpenAPI
+         @ApiResponse(responseCode = "201", description = "Item created successfully"),
+         @ApiResponse(responseCode = "400", description = "Invalid input data")
+     })
     public ResponseEntity<EntityModel<AssignmentDTO>> createCollector(@Valid @RequestBody AssignmentDTO entity) {
         Collector collector = collectorService.findByCollectorId(entity.getCollectorId());
         if (entity.getReturnDueDate().isBefore(entity.getAssignmentDate())) {
@@ -93,6 +106,12 @@ public class AssignmentController {
      * @return EntityModel<AssignmentDTO> containing the updated assignment and links
      */
     @PutMapping("/{id}")
+    @Operation(summary = "Update an assigment", description = "Updates an existing inventory assignment with the provided details.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Assignment updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+        @ApiResponse(responseCode = "404", description = "Assignment not found")
+    })
     public EntityModel<AssignmentDTO> updateAssignment(@PathVariable UUID id, @Valid @RequestBody UpdateAssignmentDTO entity) {
         Assignment assignment = assignmentService.findByAssignmentId(id);
         assignment.setActualReturnDate(entity.getActualRetunDate());
@@ -107,6 +126,11 @@ public class AssignmentController {
      * @throws AssingmentNotFoundException if the assignment with the specified ID does not exist
      */
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete an Assignment", description = "Deletes an inventory assignment by its unique identifier.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Assignment deleted successfully"),
+        @ApiResponse(responseCode = "404", description = "Assignment not found")
+    })
     public ResponseEntity<Void> deleteAssignment(@PathVariable UUID id) {
         // This method would typically use the assignmentService to delete the assignment by ID
 
