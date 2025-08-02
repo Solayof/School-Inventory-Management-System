@@ -160,49 +160,7 @@ The PostgreSQL database schema is designed with the following tables, utilizing 
 
 * `Item` 1:1 `Assignment` (An item can have at most one active assignment, with `items.assignment_id` being the foreign key.)
 
-## 8. API Endpoints
-
-The following RESTful API endpoints are exposed:
-
-| **Endpoint** | **HTTP Method** | **Description** | **Roles Required** |
-| `/api/categories` | `POST` | Create a new category | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/categories` | `GET` | Get all categories | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/categories/{id}` | `GET` | Get category by ID | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/categories/{id}` | `PUT` | Update category by ID | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/categories/{id}` | `DELETE` | Delete category by ID | `ADMIN` |
-| `/api/items` | `POST` | Create a new item (requires `categoryId` as `@RequestParam`) | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/items` | `GET` | Get all items | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/items/{id}` | `GET` | Get item by ID | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/items/serial/{serialNumber}` | `GET` | Get item by serial number | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/items/status/{status}` | `GET` | Get items by status (e.g., `AVAILABLE`, `ASSIGNED`) | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/items/category/{categoryId}` | `GET` | Get items by category ID | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/items/{id}` | `PUT` | Update item by ID (requires `categoryId` as `@RequestParam`) | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/items/{id}` | `DELETE` | Delete item by ID | `ADMIN` |
-| `/api/collectors` | `POST` | Create a new collector | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/collectors` | `GET` | Get all collectors | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/collectors/{id}` | `GET` | Get collector by ID | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/collectors/email/{email}` | `GET` | Get collector by email | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/collectors/{id}` | `PUT` | Update collector by ID | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/collectors/{id}` | `DELETE` | Delete collector by ID | `ADMIN` |
-| `/api/assignments` | `POST` | Create a new assignment (requires `itemId`, `collectorId`, `returnDueDate` (optional)) | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/assignments` | `GET` | Get all assignments | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/assignments/{id}` | `GET` | Get assignment by ID | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/assignments/collector/{collectorId}` | `GET` | Get assignments by collector ID | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/assignments/item/{itemId}` | `GET` | Get assignments by item ID | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/assignments/overdue` | `GET` | Get all overdue assignments | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/assignments/{id}/update-due-date` | `PUT` | Update assignment return due date | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/assignments/{id}/return` | `PUT` | Mark an item as returned for a given assignment | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/assignments/{id}` | `DELETE` | Delete assignment by ID | `ADMIN` |
-| `/api/reminders/manual-send/{assignmentId}` | `POST` | Manually send a reminder for an assignment (optional `message`) | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/reminders` | `GET` | Get all reminders | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/reminders/{id}` | `GET` | Get reminder by ID | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/reminders/assignment/{assignmentId}` | `GET` | Get reminders by assignment ID | `ADMIN`, `INVENTORY_MANAGER`, `COLLECTOR` |
-| `/api/reminders/{id}/status` | `PUT` | Update reminder status | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/reminders/{id}` | `DELETE` | Delete reminder by ID | `ADMIN` |
-| `/api/reports/inventory-levels` | `GET` | Get report on inventory levels (counts by status and category) | `ADMIN`, `INVENTORY_MANAGER` |
-| `/api/reports/collector-assignments` | `GET` | Get report on collector assignments (active and overdue summaries) | `ADMIN`, `INVENTORY_MANAGER` |
-
-## 9. Getting Started
+## 8. Getting Started
 
 Follow these steps to set up and run the School Inventory Management Backend System locally.
 
@@ -227,7 +185,7 @@ Before you begin, ensure you have the following installed:
    CREATE DATABASE school_inventory_db;
    ```
 
-## 10. Project Configuration
+## 9. Project Configuration
 
 1. Clone the Repository
 
@@ -252,7 +210,7 @@ Before you begin, ensure you have the following installed:
     spring.mail.password=your_email_app_password # Or your regular password if 2FA is off
     ```
 
-## 11. Building and Running the Application
+## 10. Building and Running the Application
 
 1. Clean and Build:
 Open your terminal or command prompt, navigate to the root directory of the project (where pom.xml is located), and run:
