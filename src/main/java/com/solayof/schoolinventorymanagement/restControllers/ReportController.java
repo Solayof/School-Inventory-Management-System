@@ -1,6 +1,5 @@
 package com.solayof.schoolinventorymanagement.restControllers;
 
-import com.solayof.schoolinventorymanagement.constants.CategoryName;
 import com.solayof.schoolinventorymanagement.constants.Status;
 import com.solayof.schoolinventorymanagement.entity.Assignment;
 import com.solayof.schoolinventorymanagement.services.AssignmentService;
@@ -8,12 +7,10 @@ import com.solayof.schoolinventorymanagement.services.ItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
