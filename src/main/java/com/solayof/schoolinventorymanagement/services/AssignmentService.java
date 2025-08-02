@@ -1,5 +1,7 @@
 package com.solayof.schoolinventorymanagement.services;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +11,11 @@ import com.solayof.schoolinventorymanagement.constants.Status;
 import com.solayof.schoolinventorymanagement.entity.Assignment;
 import com.solayof.schoolinventorymanagement.entity.Collector;
 import com.solayof.schoolinventorymanagement.entity.Item;
+import com.solayof.schoolinventorymanagement.entity.Reminder;
 import com.solayof.schoolinventorymanagement.exceptions.AssignmentNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.AssignmentRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AssignmentService {
@@ -65,4 +70,50 @@ public class AssignmentService {
         collectorService.saveCollector(collector); // 
         
     }
+
+    public List<Assignment> getOverdueAssignments() {
+        return assignmentRepository.findByReturnDueDateBeforeAndActualReturnDateIsNull(LocalDate.now());
+    }
+
+
+    public List<Reminder> getRemindersByAssignmentId( UUID assignmentId) {
+        Assignment assignment = findByAssignmentId(assignmentId);
+        return assignment.getReminders()
+        .stream()
+        .toList();
+    }
+
+    @Transactional
+    public Assignment updateAssignment(UUID id, LocalDate newReturnDueDate) {
+        Assignment assignment = findByAssignmentId(id);
+
+        if (assignment.getActualReturnDate() != null) {
+            throw new IllegalArgumentException("Cannot update due date for an already returned assignment.");
+        }
+
+        assignment.setReturnDueDate(newReturnDueDate);
+        return assignmentRepository.save(assignment);
+    }
+
+    @Transactional
+    public Assignment returnItem(UUID assignmentId) {
+        Assignment assignment = findByAssignmentId(assignmentId);
+
+        if (assignment.getActualReturnDate() != null) {
+            throw new IllegalArgumentException("Item for this assignment has already been returned.");
+        }
+
+        assignment.setActualReturnDate(LocalDate.now());
+        Assignment updatedAssignment = assignmentRepository.save(assignment);
+
+        // Update item status
+        Item item = updatedAssignment.getItem();
+        item.setStatus(Status.RETURNED); // or Status.AVAILABLE if it's immediately ready for re-assignment
+        item.setAssignment(null); // Unlink the assignment from the item
+        itemService.saveItem(item);
+
+        return updatedAssignment;
+    }
+
+
 }
