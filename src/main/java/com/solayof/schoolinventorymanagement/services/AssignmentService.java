@@ -115,5 +115,9 @@ public class AssignmentService {
         return updatedAssignment;
     }
 
+    public List<Assignment> getAllAssignments() {
+        return assignmentRepository.findAll();
+    }
+
 
 }
