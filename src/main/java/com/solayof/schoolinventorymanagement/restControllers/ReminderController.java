@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.solayof.schoolinventorymanagement.constants.ReminderStatus;
@@ -147,5 +148,32 @@ public class ReminderController {
     public ResponseEntity<Void> deleteReminder(@PathVariable UUID id) {
         reminderService.deleteReminder(id);
         return ResponseEntity.noContent().build(); // Return HTTP status 204 (No Content) after deletion
+    }
+
+    @GetMapping("/assignment/{assignmentId}")
+    public ResponseEntity<List<Reminder>> getRemindersByAssignmentId(@PathVariable UUID assignmentId) {
+        List<Reminder> reminders = assignmentService.getRemindersByAssignmentId(assignmentId);
+        return ResponseEntity.ok(reminders);
+    }
+
+    @PostMapping("/manual-send/{assignmentId}")
+    public ResponseEntity<Reminder> manuallySendReminder(
+            @PathVariable UUID assignmentId,
+            @RequestParam(required = false) String message) {
+        Assignment assignment = assignmentService.findByAssignmentId(assignmentId);
+
+        Reminder reminder = new Reminder();
+        reminder.setAssignment(assignment);
+        if (message != null) reminder.setMessage(message);
+        reminderService.saveReminder(reminder);
+        reminder = reminderService.sendReminder(reminder.getId());
+        
+        return new ResponseEntity<>(reminder, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Reminder> updateReminderStatus(@PathVariable UUID id, ReminderStatus status) {
+        Reminder updatedReminder = reminderService.updateReminderStatus(id, status);
+        return ResponseEntity.ok(updatedReminder);
     }
 }
