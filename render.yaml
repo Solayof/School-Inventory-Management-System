@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: school-inventory
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: render
