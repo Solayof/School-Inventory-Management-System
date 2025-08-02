@@ -42,6 +42,15 @@ public class AssignmentService {
                 .orElseThrow(() -> new AssignmentNotFoundException("Assignment not found with id: " + assignmentId));
     }
 
+    /**
+     * Delete assignment by its ID
+     * 
+     * Deleting an assignment deletes all its reminders and
+     * set the assigned item status to AVAILABLE
+     * 
+     * @param id the ID of the assignment to delete
+     * @throws AssignmentNotFoundException if no assignment is found with the given ID
+     */
     public void deleteAssignment(UUID id) {
         Assignment assignment = findByAssignmentId(id);
         Collector collector = assignment.getCollector();
