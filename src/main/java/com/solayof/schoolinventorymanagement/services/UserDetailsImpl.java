@@ -164,4 +164,18 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+    public static UserEntity toUserEntity (UserDetailsImpl userDetailsImpl) {
+        UserEntity user = new UserEntity();
+
+        user.setId(userDetailsImpl.getId());
+        user.setDob(userDetailsImpl.getDob());
+        user.setEmail(userDetailsImpl.getEmail());
+        user.setFirstName(userDetailsImpl.getFirstName());
+        user.setMiddleName(userDetailsImpl.getMiddleName());
+        user.setLastName(userDetailsImpl.getLastName());
+        user.setGender(userDetailsImpl.getGender());
+        user.setPhone(userDetailsImpl.getPhone());
+
+        return user;
+    }
 }
