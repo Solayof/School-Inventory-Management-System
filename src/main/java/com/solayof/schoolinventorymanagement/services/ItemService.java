@@ -1,7 +1,10 @@
 package com.solayof.schoolinventorymanagement.services;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -179,5 +182,22 @@ public class ItemService {
         return itemRepository.findByNameContainingIgnoreCase(name);
     }
 
+    /**
+     * Retrieves the count of items grouped by their status.
+     * @return A map where keys are Status enum values and values are their respective counts.
+     */
+    public Map<Status, Long> getItemCountsByStatus() {
+        return itemRepository.findAll().stream()
+                .collect(Collectors.groupingBy(Item::getStatus, () -> new EnumMap<>(Status.class), Collectors.counting()));
+    }
+
+    /**
+     * Retrieves the count of items grouped by their category name.
+     * @return A map where keys are String values (category names) and values are their respective counts.
+     */
+    public Map<String, Long> getItemCountsByCategory() { 
+        return itemRepository.findAll().stream()
+                .collect(Collectors.groupingBy(item -> item.getCategory().getName(), Collectors.counting())); 
+    }
 }
 
