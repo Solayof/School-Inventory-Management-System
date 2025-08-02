@@ -1,5 +1,6 @@
 package com.solayof.schoolinventorymanagement.services;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,10 +13,14 @@ import com.solayof.schoolinventorymanagement.entity.Reminder;
 import com.solayof.schoolinventorymanagement.exceptions.ReminderNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.ReminderRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ReminderService {
     @Autowired
     private ReminderRepository reminderRepository; // Injecting the ReminderRepository to interact with reminders
+    @Autowired
+    private MailService mailService; // Inject MailService
 
     /**
      * Saves a reminder to the repository.
@@ -59,4 +64,41 @@ public class ReminderService {
         Assignment assignment = reminder.getAssignment();
         assignment.getReminders().remove(reminder);
     }
+
+    @Transactional
+    public Reminder sendReminder(UUID reminderId) {
+        Reminder reminder = findByReminderId(reminderId);
+
+        // Ensure the assignment and collector are loaded to get email
+        Assignment assignment = reminder.getAssignment();
+        if (assignment == null || assignment.getCollector() == null || assignment.getItem() == null) {
+            throw new IllegalStateException("Cannot send reminder: associated assignment or collector/item data is missing.");
+        }
+        String recipientEmail = assignment.getCollector().getEmail();
+        String subject = "Inventory Return Reminder: " + assignment.getItem().getName();
+        String body = reminder.getMessage() != null ? reminder.getMessage() :
+                      "Dear " + assignment.getCollector().getName() + ",\n\n" +
+                      "This is a reminder that the item '" + assignment.getItem().getName() + "' (Serial: " + assignment.getItem().getSerialNumber() + ") " +
+                      "assigned to you on " + assignment.getAssignmentDate() + " is due for return by " + assignment.getReturnDueDate() + ".\n\n" +
+                      "Please return it as soon as possible. Thank you.";
+
+        try {
+            mailService.sendEmail(recipientEmail, subject, body);
+            reminder.setStatus(ReminderStatus.valueOf("SENT"));
+            reminder.setSentAt(Instant.now());
+            return reminderRepository.save(reminder);
+        } catch (Exception e) {
+            reminder.setStatus(ReminderStatus.valueOf("FAILED"));
+            saveReminder(reminder); // Save status as failed
+        }
+        return reminder; // Return the reminder with updated status
+    }
+
+    @Transactional
+    public Reminder updateReminderStatus(UUID id, ReminderStatus newStatus) {
+        Reminder reminder = findByReminderId(id);
+        reminder.setStatus(newStatus);
+        return reminderRepository.save(reminder);
+    }
+
 }
