@@ -7,9 +7,7 @@ import com.solayof.schoolinventorymanagement.constants.ReminderStatus;
 import jakarta.validation.constraints.Size;
 
 public class UpdateReminderDTO {
-   @Size(max = 10, message = "Reminder date must be in the format YYYY-MM-DD")
    private LocalDate reminderDate;
-    @Size(max = 10, message = "Status must be at most 10 characters")
    private ReminderStatus status;
     @Size(max = 500, message = "Message must be at most 500 characters")
    private String message;
