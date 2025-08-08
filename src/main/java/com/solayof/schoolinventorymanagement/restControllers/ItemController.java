@@ -214,28 +214,6 @@ public class ItemController {
     }
 
     /**
-     * Retrieves items by their category IDs and name containing a specific string.
-     * This method is not implemented in this snippet, but it would typically return a collection of EntityModel<Item> for items in the specified categories and containing the specified name.
-     * @param categoryIds the list of category IDs to retrieve items from
-     * @param name the string to search for in item names
-     * @return Collection<EntityModel<Item>> containing items in the specified categories and containing the specified name and links
-     */
-    // @GetMapping("/categories/name")
-    // public ResponseEntity<CollectionModel<EntityModel<ItemDTO>>> getItemsByCategoryIdsAndName(List<UUID> categoryIds, String name) {
-    //     // This method would typically use the ItemService to find items by category IDs and name containing a specific string
-    //     List<Item> items = itemService.findByCategoryIdInAndNameContainingIgnoreCase(categoryIds, name);
-    //     return new ResponseEntity<>(
-    //         CollectionModel.of(
-    //             items.stream()
-    //                 .map(assembler::toModel)
-    //                 .collect(Collectors.toList()),
-    //             linkTo(methodOn(ItemController.class).getItemsByCategoryIdsAndName(categoryIds, name)).withSelfRel()
-    //         ),
-    //         HttpStatus.OK
-    //     );
-    // }
-
-    /**
      * Retrieves items by their status.
      * This method is not implemented in this snippet, but it would typically return a collection of EntityModel<Item> for items with the specified status.
      * @param status the status of the items to retrieve
