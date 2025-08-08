@@ -10,6 +10,8 @@ import com.solayof.schoolinventorymanagement.entity.Collector;
 import com.solayof.schoolinventorymanagement.exceptions.CollectorNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.CollectorRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class CollectorService {
     @Autowired
@@ -54,6 +56,7 @@ public class CollectorService {
      * @param collector the Collector entity to save
      * @return the saved Collector entity
      */
+    @Transactional
     public Collector saveCollector(Collector collector) {
         return collectorRepository.save(collector);
     }
@@ -63,6 +66,7 @@ public class CollectorService {
      *
      * @param collectorId the ID of the collector to delete
      */
+    @Transactional
     public void deleteCollector(UUID collectorId) {
         Collector collector = findByCollectorId(collectorId);
         collectorRepository.delete(collector);
