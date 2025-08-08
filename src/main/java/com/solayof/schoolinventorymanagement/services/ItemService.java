@@ -15,6 +15,8 @@ import com.solayof.schoolinventorymanagement.entity.Item;
 import com.solayof.schoolinventorymanagement.exceptions.ItemNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.ItemRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ItemService {
     @Autowired // Using Spring's @Autowired to inject the ItemRepository
@@ -106,6 +108,7 @@ public class ItemService {
      * @param item the Item entity to save
      * @return the saved Item entity
      */
+    @Transactional
     public Item saveItem(Item item) {
         return itemRepository.save(item);
     }
@@ -127,6 +130,7 @@ public class ItemService {
      * @param itemId the ID of the item to delete
      * @throws ItemNotFoundException if no item is found with the given ID
      */
+    @Transactional
     public void deleteItem(UUID itemId) {
         Item item = findByItemId(itemId);
         if (item.getStatus() == Status.ASSIGNED) {
