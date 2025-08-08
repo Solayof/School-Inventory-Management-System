@@ -14,6 +14,8 @@ import com.solayof.schoolinventorymanagement.entity.UserEntity;
 import com.solayof.schoolinventorymanagement.exceptions.UserNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService implements UserDetailsService {
     @Autowired
@@ -33,6 +35,7 @@ public class UserService implements UserDetailsService {
         .orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    @Transactional
     public String addUser(UserEntity user) {
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
