@@ -28,6 +28,7 @@ public class ReminderService {
      * @param reminder the Reminder entity to save
      * @return the saved Reminder entity
      */
+    @Transactional
     public Reminder saveReminder(Reminder reminder) {
         return reminderRepository.save(reminder);
     }
@@ -49,6 +50,7 @@ public class ReminderService {
      * @return the found Reminder entity
      * @throws ReminderNotFoundException if no reminder is found with the given ID
      */
+    @Transactional
     public Reminder findByReminderId(UUID reminderId) {
         return reminderRepository.findById(reminderId)
                 .orElseThrow(() -> new ReminderNotFoundException("Reminder not found with id: " + reminderId));
@@ -59,6 +61,7 @@ public class ReminderService {
      * @param id the ID of the reminder to delete
      * @return void
      */
+    @Transactional
     public void deleteReminder(UUID id) {
         Reminder reminder = findByReminderId(id);
         Assignment assignment = reminder.getAssignment();
@@ -84,11 +87,11 @@ public class ReminderService {
 
         try {
             mailService.sendEmail(recipientEmail, subject, body);
-            reminder.setStatus(ReminderStatus.valueOf("SENT"));
+            reminder.setStatus(ReminderStatus.SENT);
             reminder.setSentAt(Instant.now());
             return reminderRepository.save(reminder);
         } catch (Exception e) {
-            reminder.setStatus(ReminderStatus.valueOf("FAILED"));
+            reminder.setStatus(ReminderStatus.FAILED);
             saveReminder(reminder); // Save status as failed
         }
         return reminder; // Return the reminder with updated status
