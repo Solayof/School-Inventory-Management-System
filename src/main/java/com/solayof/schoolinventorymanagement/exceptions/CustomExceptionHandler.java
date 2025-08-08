@@ -94,11 +94,11 @@ public class CustomExceptionHandler {
      * @param ex the exception that was thrown
      * @return ResponseEntity with a generic error message and HTTP status 500
      */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneralException(Exception ex) {
-        return new ResponseEntity<String>(
-                "An unexpected error occurred: " + ex.getMessage().substring(0, 40) + "...",
-                HttpStatus.INTERNAL_SERVER_ERROR
-        ); // Limiting the message length for readability and security
-    }
+    // @ExceptionHandler(Exception.class)
+    // public ResponseEntity<String> handleGeneralException(Exception ex) {
+    //     return new ResponseEntity<String>(
+    //             "An unexpected error occurred: " + ex.getMessage().substring(0, 40) + "...",
+    //             HttpStatus.INTERNAL_SERVER_ERROR
+    //     ); // Limiting the message length for readability and security
+    // }
 }
