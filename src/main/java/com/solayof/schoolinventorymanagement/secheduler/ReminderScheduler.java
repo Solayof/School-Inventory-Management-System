@@ -23,7 +23,6 @@ public class ReminderScheduler {
 
 
     // This method will run daily at 9 AM (0 0 9 * * ?)
-    // You can adjust the cron expression as needed.
     @Scheduled(cron = "0 0 9 * * ?")
     public void checkAndSendOverdueReminders() {
         log.info("Running scheduled task: Checking for overdue assignments and sending reminders...");
