@@ -32,6 +32,7 @@ public class AssignmentService {
      * @param assignment the Assignment entity to save
      * @return the saved Assignment entity
      */
+    @Transactional
     public Assignment saveAssignment(Assignment assignment) {
         return assignmentRepository.save(assignment);
     }
@@ -56,6 +57,7 @@ public class AssignmentService {
      * @param id the ID of the assignment to delete
      * @throws AssignmentNotFoundException if no assignment is found with the given ID
      */
+    @Transactional
     public void deleteAssignment(UUID id) {
         Assignment assignment = findByAssignmentId(id);
         Collector collector = assignment.getCollector();
@@ -108,7 +110,7 @@ public class AssignmentService {
 
         // Update item status
         Item item = updatedAssignment.getItem();
-        item.setStatus(Status.RETURNED); // or Status.AVAILABLE if it's immediately ready for re-assignment
+        item.setStatus(Status.AVAILABLE); // or Status.AVAILABLE if it's immediately ready for re-assignment
         item.setAssignment(null); // Unlink the assignment from the item
         itemService.saveItem(item);
 
