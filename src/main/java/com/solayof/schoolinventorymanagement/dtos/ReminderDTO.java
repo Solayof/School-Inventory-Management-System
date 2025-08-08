@@ -15,7 +15,6 @@ public class ReminderDTO {
    @NotNull(message = "Reminder date cannot be null")
    private LocalDate reminderDate;
     @NotNull(message = "Status cannot be null")
-    @Size(max = 10, message = "Status must be at most 10 characters")
    private ReminderStatus status;
     @NotNull(message = "Message cannot be null")
     @Size(max = 500, message = "Message must be at most 500 characters")
