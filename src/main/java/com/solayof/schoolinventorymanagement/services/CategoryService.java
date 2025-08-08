@@ -84,6 +84,7 @@ public class CategoryService {
      * @param categoryId the ID of the category to delete
      * @throws CategoryNotFoundException if no category is found with the given ID
      */
+    @Transactional
     public void deleteCategory(UUID categoryId) {
         Category category = findByCategoryId(categoryId);
         categoryRepository.delete(category);
