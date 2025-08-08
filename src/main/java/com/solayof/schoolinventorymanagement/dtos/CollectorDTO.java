@@ -22,6 +22,13 @@ public class CollectorDTO {
 
     public CollectorDTO() {
     }
+    
+    public CollectorDTO(String name, String contactInformation, String email) {
+        this.name = name;
+        this.contactInformation = contactInformation;
+        this.email = email;
+    }
+
     public CollectorDTO(UUID id, String name, String contactInformation, String email, String createdAt) {
         this.id = id;
         this.name = name;
