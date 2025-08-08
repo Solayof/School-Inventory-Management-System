@@ -1,188 +1,171 @@
 package com.solayof.schoolinventorymanagement.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.util.*;
-
 import com.solayof.schoolinventorymanagement.constants.Status;
 import com.solayof.schoolinventorymanagement.entity.Category;
 import com.solayof.schoolinventorymanagement.entity.Item;
 import com.solayof.schoolinventorymanagement.exceptions.ItemNotFoundException;
 import com.solayof.schoolinventorymanagement.repository.ItemRepository;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-@ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+// Unit test class for ItemService
 class ItemServiceTest {
 
     @Mock
-    private ItemRepository itemRepository; // Mocked repository for items
+    private ItemRepository itemRepository; // Mocking the ItemRepository
 
     @Mock
-    private CategoryService categoryService; // Mocked service for interacting with categories
+    private CategoryService categoryService; // Mocking the CategoryService
 
     @InjectMocks
-    private ItemService itemService; // The service being tested
+    private ItemService itemService; // Injecting mocks into the ItemService
 
     private UUID itemId;
-    private UUID categoryId;
-    private Category category;
     private Item item;
+    private Category category;
 
     @BeforeEach
-    void setup() {
-        // Initialize test data before each test
-        categoryId = UUID.randomUUID();
-        itemId = UUID.randomUUID();
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
 
-        category = new Category(categoryId, "Electronics", "Electronic items", new HashSet<>());
-        item = new Item(itemId, "Projector", "HD Projector", "SN123", Status.AVAILABLE, null, null, category, null);
+        // Initialize test data
+        itemId = UUID.randomUUID();
+        category = new Category();
+        category.setName("Electronics");
+        item = new Item();
+        item.setId(itemId);
+        item.setName("Laptop");
+        item.setSerialNumber("SN1234");
+        item.setStatus(Status.AVAILABLE);
+        item.setCategory(category);
     }
 
     @Test
-    void findByItemId_success() {
-        // Simulate finding an item by ID
+    void testFindByItemId_Success() {
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
-        Item found = itemService.findByItemId(itemId);
+        Item result = itemService.findByItemId(itemId);
 
-        assertEquals("Projector", found.getName());
+        assertEquals(item, result);
+        verify(itemRepository).findById(itemId);
     }
 
     @Test
-    void findByItemId_notFound() {
-        // Simulate item not found by ID
+    void testFindByItemId_NotFound() {
         when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
         assertThrows(ItemNotFoundException.class, () -> itemService.findByItemId(itemId));
     }
 
     @Test
-    void existsById_returnsTrue() {
+    void testExistsById() {
         when(itemRepository.existsById(itemId)).thenReturn(true);
 
         assertTrue(itemService.existsById(itemId));
     }
 
     @Test
-    void existsById_returnsFalse() {
-        when(itemRepository.existsById(itemId)).thenReturn(false);
+    void testFindByName_Success() {
+        when(itemRepository.findByName("Laptop")).thenReturn(Optional.of(item));
 
-        assertFalse(itemService.existsById(itemId));
+        Item result = itemService.findByName("Laptop");
+        assertEquals(item, result);
     }
 
     @Test
-    void findByName_success() {
-        // Simulate finding an item by name
-        when(itemRepository.findByName("Projector")).thenReturn(Optional.of(item));
+    void testFindByName_NotFound() {
+        when(itemRepository.findByName("Tablet")).thenReturn(Optional.empty());
 
-        Item found = itemService.findByName("Projector");
-
-        assertEquals("Projector", found.getName());
+        assertThrows(ItemNotFoundException.class, () -> itemService.findByName("Tablet"));
     }
 
     @Test
-    void findByName_notFound() {
-        // Simulate not finding an item by name
-        when(itemRepository.findByName("Scanner")).thenReturn(Optional.empty());
+    void testExistsByName() {
+        when(itemRepository.existsByName("Laptop")).thenReturn(true);
 
-        assertThrows(ItemNotFoundException.class, () -> itemService.findByName("Scanner"));
+        assertTrue(itemService.existsByName("Laptop"));
     }
 
     @Test
-    void existsByName_returnsTrue() {
-        when(itemRepository.existsByName("Projector")).thenReturn(true);
+    void testExistsBySerialNumber() {
+        when(itemRepository.existsBySerialNumber("SN1234")).thenReturn(true);
 
-        assertTrue(itemService.existsByName("Projector"));
+        assertTrue(itemService.existsBySerialNumber("SN1234"));
     }
 
     @Test
-    void existsBySerialNumber_returnsTrue() {
-        when(itemRepository.existsBySerialNumber("SN123")).thenReturn(true);
+    void testFindBySerialNumber_Success() {
+        when(itemRepository.findBySerialNumber("SN1234")).thenReturn(Optional.of(item));
 
-        assertTrue(itemService.existsBySerialNumber("SN123"));
+        Item result = itemService.findBySerialNumber("SN1234");
+        assertEquals(item, result);
     }
 
     @Test
-    void findBySerialNumber_success() {
-        // Simulate finding an item by serial number
-        when(itemRepository.findBySerialNumber("SN123")).thenReturn(Optional.of(item));
+    void testFindBySerialNumber_NotFound() {
+        when(itemRepository.findBySerialNumber("SN0000")).thenReturn(Optional.empty());
 
-        Item found = itemService.findBySerialNumber("SN123");
-
-        assertEquals("SN123", found.getSerialNumber());
+        assertThrows(ItemNotFoundException.class, () -> itemService.findBySerialNumber("SN0000"));
     }
 
     @Test
-    void findBySerialNumber_notFound() {
-        when(itemRepository.findBySerialNumber("SN999")).thenReturn(Optional.empty());
-
-        assertThrows(ItemNotFoundException.class, () -> itemService.findBySerialNumber("SN999"));
-    }
-
-    @Test
-    void findByCategoryId_success() {
-        // Simulate finding item by its category
+    void testFindByCategoryId_Success() {
+        UUID categoryId = UUID.randomUUID();
         when(itemRepository.findByCategoryId(categoryId)).thenReturn(Optional.of(item));
 
-        Item found = itemService.findByCategoryId(categoryId);
-
-        assertEquals("Projector", found.getName());
+        Item result = itemService.findByCategoryId(categoryId);
+        assertEquals(item, result);
     }
 
     @Test
-    void findByCategoryId_notFound() {
-        // Simulate item not found in category
+    void testFindByCategoryId_NotFound() {
+        UUID categoryId = UUID.randomUUID();
         when(itemRepository.findByCategoryId(categoryId)).thenReturn(Optional.empty());
 
         assertThrows(ItemNotFoundException.class, () -> itemService.findByCategoryId(categoryId));
     }
 
     @Test
-    void saveItem_success() {
-        // Simulate saving an item
+    void testSaveItem() {
         when(itemRepository.save(item)).thenReturn(item);
 
-        Item saved = itemService.saveItem(item);
-
-        assertNotNull(saved);
-        verify(itemRepository).save(item);
+        Item savedItem = itemService.saveItem(item);
+        assertEquals(item, savedItem);
     }
 
     @Test
-    void findAllItems_success() {
-        // Simulate fetching all items
+    void testFindAllItems() {
         List<Item> items = List.of(item);
         when(itemRepository.findAll()).thenReturn(items);
 
-        List<Item> found = itemService.findAllItems();
-
-        assertEquals(1, found.size());
+        List<Item> result = itemService.findAllItems();
+        assertEquals(items, result);
     }
 
     @Test
-    void deleteItem_success_whenNotAssigned() {
-        // Simulate successful deletion of an unassigned item
+    void testDeleteItem_Success() {
         item.setStatus(Status.AVAILABLE);
-        category.getItems().add(item);
+        category.setItems(new HashSet<>(Set.of(item)));
 
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
-        when(categoryService.saveCategory(any())).thenReturn(category);
 
         itemService.deleteItem(itemId);
 
-        // Ensure the item was removed from the category and saved
-        assertFalse(category.getItems().contains(item));
         verify(categoryService).saveCategory(category);
+        assertFalse(category.getItems().contains(item));
+        assertNull(item.getCategory());
     }
 
     @Test
-    void deleteItem_fails_whenAssigned() {
-        // Simulate failure to delete an ASSIGNED item
+    void testDeleteItem_AssignedStatus_ShouldThrowException() {
         item.setStatus(Status.ASSIGNED);
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
@@ -190,48 +173,54 @@ class ItemServiceTest {
     }
 
     @Test
-    void findByCategoryIdIn_success() {
-        // Simulate finding multiple items by category IDs
-        List<UUID> ids = List.of(categoryId);
-        List<Item> items = List.of(item);
-        when(itemRepository.findByCategoryIdIn(ids)).thenReturn(items);
+    void testFindByCategoryIdIn() {
+        List<UUID> ids = List.of(UUID.randomUUID());
+        when(itemRepository.findByCategoryIdIn(ids)).thenReturn(List.of(item));
 
         List<Item> result = itemService.findByCategoryIdIn(ids);
-
         assertEquals(1, result.size());
     }
 
     @Test
-    void findByCategoryIdInAndNameContainingIgnoreCase_success() {
-        // Simulate case-insensitive name search within categories
-        List<UUID> ids = List.of(categoryId);
-        List<Item> items = List.of(item);
-        when(itemRepository.findByCategoryIdInAndNameContainingIgnoreCase(ids, "proj")).thenReturn(items);
+    void testFindByCategoryIdInAndNameContainingIgnoreCase() {
+        List<UUID> ids = List.of(UUID.randomUUID());
+        when(itemRepository.findByCategoryIdInAndNameContainingIgnoreCase(ids, "lap"))
+                .thenReturn(List.of(item));
 
-        List<Item> result = itemService.findByCategoryIdInAndNameContainingIgnoreCase(ids, "proj");
-
+        List<Item> result = itemService.findByCategoryIdInAndNameContainingIgnoreCase(ids, "lap");
         assertEquals(1, result.size());
     }
 
     @Test
-    void findByStatus_success() {
-        // Simulate fetching items by status
-        List<Item> items = List.of(item);
-        when(itemRepository.findByStatus(Status.AVAILABLE)).thenReturn(items);
+    void testFindByStatus() {
+        when(itemRepository.findByStatus(Status.AVAILABLE)).thenReturn(List.of(item));
 
         List<Item> result = itemService.findByStatus(Status.AVAILABLE);
-
         assertEquals(1, result.size());
     }
 
     @Test
-    void findByNameContainingIgnoreCase_success() {
-        // Simulate partial name match search
-        List<Item> items = List.of(item);
-        when(itemRepository.findByNameContainingIgnoreCase("proj")).thenReturn(items);
+    void testFindByNameContainingIgnoreCase() {
+        when(itemRepository.findByNameContainingIgnoreCase("lap"))
+                .thenReturn(List.of(item));
 
-        List<Item> result = itemService.findByNameContainingIgnoreCase("proj");
-
+        List<Item> result = itemService.findByNameContainingIgnoreCase("lap");
         assertEquals(1, result.size());
     }
-}
+
+    @Test
+    void testGetItemCountsByStatus() {
+        when(itemRepository.findAll()).thenReturn(List.of(item));
+
+        Map<Status, Long> counts = itemService.getItemCountsByStatus();
+        assertEquals(1L, counts.get(Status.AVAILABLE));
+    }
+
+    @Test
+    void testGetItemCountsByCategory() {
+        when(itemRepository.findAll()).thenReturn(List.of(item));
+
+        Map<String, Long> counts = itemService.getItemCountsByCategory();
+        assertEquals(1L, counts.get("Electronics"));
+    }
+} 
