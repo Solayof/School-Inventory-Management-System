@@ -14,8 +14,10 @@ import com.solayof.schoolinventorymanagement.exceptions.ReminderNotFoundExceptio
 import com.solayof.schoolinventorymanagement.repository.ReminderRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ReminderService {
     @Autowired
     private ReminderRepository reminderRepository; // Injecting the ReminderRepository to interact with reminders
@@ -89,9 +91,13 @@ public class ReminderService {
             mailService.sendEmail(recipientEmail, subject, body);
             reminder.setStatus(ReminderStatus.SENT);
             reminder.setSentAt(Instant.now());
-            return reminderRepository.save(reminder);
+            reminder.setMessage(body);
+            log.info("Reminder email sent successfully to {}", recipientEmail);
+            return saveReminder(reminder);
         } catch (Exception e) {
+            log.error("Failed to send reminder email for reminder ID: {}", reminderId, e);
             reminder.setStatus(ReminderStatus.FAILED);
+            reminder.setMessage("Failed to send reminder email: " + e.getMessage());
             saveReminder(reminder); // Save status as failed
         }
         return reminder; // Return the reminder with updated status
