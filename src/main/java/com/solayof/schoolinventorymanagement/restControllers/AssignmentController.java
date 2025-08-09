@@ -141,19 +141,52 @@ public class AssignmentController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Return 204 No Content status after deletion
     }
 
+    /**
+     * Retrieves all overdue assignments.
+     * This method fetches all assignments that are overdue based on the current date.
+     * * @return ResponseEntity containing a list of overdue assignments
+     */
     @GetMapping("/overdue")
+    @Operation(summary = "Get all overdue assignments", description = "Retrieves a list of all overdue inventory assignments.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Overdue assignments retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "No overdue assignments found")
+    })
     public ResponseEntity<List<Assignment>> getOverdueAssignments() {
         List<Assignment> overdueAssignments = assignmentService.getOverdueAssignments();
         return ResponseEntity.ok(overdueAssignments);
     }
 
+    /**
+     * Returns an item that was previously assigned.
+     * This method updates the assignment's actual return date and changes the item's status to AVAILABLE.
+     * @param id the UUID of the assignment to return
+     * @return ResponseEntity containing the updated assignment
+     */
     @PutMapping("/{id}/return")
+    @Operation(summary = "Return an item", description = "Marks an inventory item as returned and updates its status to AVAILABLE.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Item returned successfully"),
+        @ApiResponse(responseCode = "404", description = "Assignment not found")
+    })
     public ResponseEntity<Assignment> returnItem(@PathVariable UUID id) {
         Assignment returnedAssignment = assignmentService.returnItem(id);
         return ResponseEntity.ok(returnedAssignment);
     }
 
+    /**
+     * Updates the return due date of an assignment.
+     * This method allows changing the return due date for an existing assignment.
+     * @param id the UUID of the assignment to update
+     * @param newReturnDueDate the new return due date to set
+     * @return ResponseEntity containing the updated assignment
+     */
     @PutMapping("/{id}/update-due-date")
+    @Operation(summary = "Update assignment due date", description = "Updates the return due date for an existing inventory assignment.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Assignment due date updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Assignment not found")
+    })
     public ResponseEntity<Assignment> updateAssignmentDueDate(
             @PathVariable UUID id,
             @RequestParam LocalDate newReturnDueDate) {
