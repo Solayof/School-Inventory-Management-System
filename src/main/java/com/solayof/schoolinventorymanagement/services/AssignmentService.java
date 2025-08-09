@@ -106,15 +106,12 @@ public class AssignmentService {
         }
 
         assignment.setActualReturnDate(LocalDate.now());
-        Assignment updatedAssignment = assignmentRepository.save(assignment);
 
         // Update item status
-        Item item = updatedAssignment.getItem();
-        item.setStatus(Status.AVAILABLE); // or Status.AVAILABLE if it's immediately ready for re-assignment
-        item.setAssignment(null); // Unlink the assignment from the item
-        itemService.saveItem(item);
+        deleteAssignment(assignmentId); // This will unlink the item and set its status to AVAILABLE
+        
 
-        return updatedAssignment;
+        return assignment;
     }
 
     public List<Assignment> getAllAssignments() {
