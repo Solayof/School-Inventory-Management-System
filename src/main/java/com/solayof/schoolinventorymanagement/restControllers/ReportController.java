@@ -5,6 +5,10 @@ import com.solayof.schoolinventorymanagement.entity.Assignment;
 import com.solayof.schoolinventorymanagement.services.AssignmentService;
 import com.solayof.schoolinventorymanagement.services.ItemService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +36,11 @@ public class ReportController {
      * @return A map containing inventory level statistics.
      */
     @GetMapping("/inventory-levels")
+    @Operation(summary = "Get inventory levels report", description = "Generates a report on inventory levels including item counts by status and category.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Inventory levels report generated successfully"),
+        @ApiResponse(responseCode = "404", description = "No items found in inventory")
+    })
     public ResponseEntity<Map<String, Object>> getInventoryLevelsReport() {
         Map<String, Object> report = new HashMap<>();
 
@@ -57,6 +66,11 @@ public class ReportController {
      * @return A map containing collector assignment statistics.
      */
     @GetMapping("/collector-assignments")
+    @Operation(summary = "Get collector assignments report", description = "Generates a report on collector assignments including active and overdue assignments.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Collector assignments report generated successfully"),
+        @ApiResponse(responseCode = "404", description = "No assignments found")
+    })
     public ResponseEntity<Map<String, Object>> getCollectorAssignmentsReport() {
         Map<String, Object> report = new HashMap<>();
 
