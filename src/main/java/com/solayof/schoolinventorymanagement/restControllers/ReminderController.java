@@ -1,5 +1,6 @@
 package com.solayof.schoolinventorymanagement.restControllers;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -150,13 +151,37 @@ public class ReminderController {
         return ResponseEntity.noContent().build(); // Return HTTP status 204 (No Content) after deletion
     }
 
+    /**
+     * Retrieves all reminders for a specific assignment.
+     *
+     * @param assignmentId the ID of the assignment to retrieve reminders for
+     * @return ResponseEntity with a list of reminders for the specified assignment
+     */
     @GetMapping("/assignment/{assignmentId}")
+    @Operation(summary = "Get all reminders for an assignment", description = "Retrieves all inventory reminders associated with a specific assignment.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Reminders retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "No reminders found for the assignment")
+    })
     public ResponseEntity<List<Reminder>> getRemindersByAssignmentId(@PathVariable UUID assignmentId) {
         List<Reminder> reminders = assignmentService.getRemindersByAssignmentId(assignmentId);
         return ResponseEntity.ok(reminders);
     }
 
+    /**
+     * Manually sends a reminder for an assignment.
+     * This method allows sending a reminder immediately for a specific assignment.
+     *
+     * @param assignmentId the ID of the assignment to send a reminder for
+     * @param message optional custom message for the reminder
+     * @return ResponseEntity with the sent reminder
+     */
     @PostMapping("/manual-send/{assignmentId}")
+    @Operation(summary = "Manually send a reminder for an assignment", description = "Sends a reminder for a specific assignment immediately.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Reminder sent successfully"),
+        @ApiResponse(responseCode = "404", description = "Assignment not found")
+    })
     public ResponseEntity<Reminder> manuallySendReminder(
             @PathVariable UUID assignmentId,
             @RequestParam(required = false) String message) {
@@ -164,6 +189,8 @@ public class ReminderController {
 
         Reminder reminder = new Reminder();
         reminder.setAssignment(assignment);
+        reminder.setReminderDate(LocalDate.now());
+        reminder.setStatus(ReminderStatus.PENDING);
         if (message != null) reminder.setMessage(message);
         reminderService.saveReminder(reminder);
         reminder = reminderService.sendReminder(reminder.getId());
@@ -171,7 +198,19 @@ public class ReminderController {
         return new ResponseEntity<>(reminder, HttpStatus.OK);
     }
 
+    /**
+     * Updates the status of a reminder.
+     *
+     * @param id the ID of the reminder to update
+     * @param status the new status to set for the reminder
+     * @return ResponseEntity with the updated reminder
+     */
     @PutMapping("/{id}/status")
+    @Operation(summary = "Update reminder status", description = "Updates the status of an inventory reminder.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Reminder status updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Reminder not found")
+    })
     public ResponseEntity<Reminder> updateReminderStatus(@PathVariable UUID id, ReminderStatus status) {
         Reminder updatedReminder = reminderService.updateReminderStatus(id, status);
         return ResponseEntity.ok(updatedReminder);
