@@ -105,6 +105,11 @@ public class CollectorController {
      * @return ResponseEntity containing a list of EntityModel<CollectorDTO>
      */
     @GetMapping("")
+    @Operation(summary = "Get all collectors", description = "Retrieves a list of all inventory collectors.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Collectors retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "No collectors found")
+    })
     public ResponseEntity<CollectionModel<EntityModel<CollectorDTO>>> getAll() {
         List<Collector> collectors = collectorService.findAll(); // Assuming findAll() method exists in CollectorService
         List<EntityModel<CollectorDTO>> collectorModels = collectors.stream()
