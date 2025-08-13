@@ -35,7 +35,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/assignments")
+@RequestMapping("/api/assignments")
 public class AssignmentController {
     @Autowired
     private AssignmentService assignmentService; // Injecting the AssignmentService to handle assignment-related operations

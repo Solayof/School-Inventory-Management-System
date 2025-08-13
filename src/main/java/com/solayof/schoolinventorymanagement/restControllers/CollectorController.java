@@ -30,7 +30,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/collectors")
+@RequestMapping("/api/collectors")
 public class CollectorController {
     @Autowired
     private CollectorService collectorService; // Injecting the CollectorService to handle collector-related operations

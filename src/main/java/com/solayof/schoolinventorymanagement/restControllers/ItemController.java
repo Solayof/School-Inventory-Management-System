@@ -37,7 +37,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/items") // Base URL for all item-related endpoints
+@RequestMapping("/api/items") // Base URL for all item-related endpoints
 public class ItemController {
     @Autowired
     private ItemService itemService; // Injecting the ItemService to handle item-related operations
