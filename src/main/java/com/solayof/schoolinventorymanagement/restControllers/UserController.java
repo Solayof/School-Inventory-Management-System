@@ -413,6 +413,9 @@ public class UserController {
     })
     public EntityModel<UserEntity> updateOne(@RequestBody UpdateUserDTO newUser, @Valid @PathVariable UUID id) {
         UserEntity usr = userService.getUserById(id);
+        if (newUser.getEmail() != null && userRepository.existsByEmail(newUser.getEmail())
+                && !usr.getEmail().equals(newUser.getEmail()))
+            throw new IllegalArgumentException("email " + newUser.getEmail() + " already exist");
         return assembler.toModel(userService.save(usr.updateEntity(newUser)));
     }
 
