@@ -41,4 +41,15 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
         return "UserEntity added Sucessfully";
     }
+
+    @Transactional
+    public String updateUser(UserEntity user) {
+        userRepository.save(user);
+        return "UserEntity updated Sucessfully";
+    }
+
+    @Transactional
+    public String updateUserPassword(UserEntity user) {
+        return addUser(user);
+    }
 }
