@@ -236,12 +236,6 @@ public class UserController {
         .orElseThrow(() -> new UserNotFoundException(id));
         return assembler.toModel(user);
     }
-
-    // @PostMapping("")
-    // public EntityModel<UserEntity> createOne(@RequestBody UserEntity newUser) {
-    //     return assembler.toModel(userRepository.save(newUser));
-    // }
-
     
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPERADMIN')")
