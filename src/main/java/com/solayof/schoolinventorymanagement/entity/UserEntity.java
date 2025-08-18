@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.solayof.schoolinventorymanagement.dtos.UpdateUserDTO;
 
 import jakarta.persistence.*;
 
@@ -60,4 +61,15 @@ public class UserEntity {
         joinColumns = @JoinColumn(name="user_id"),
         inverseJoinColumns = @JoinColumn(name="role_id"))
     private Set<RoleEntity> roles = new HashSet<>();
+
+    public UserEntity updatEntity(UpdateUserDTO userDTO) {
+        if (userDTO.getFirstName() != null) this.setFirstName(userDTO.getFirstName());
+        if (userDTO.getGender() != null) this.setGender(userDTO.getGender());
+        if (userDTO.getLastName() != null) this.setLastName(userDTO.getLastName());
+        if (userDTO.getMiddleName() != null) this.setMiddleName(userDTO.getMiddleName());
+        if (userDTO.getDob() != null) this.setDob(userDTO.getDob());
+        if (userDTO.getEmail() != null) this.setEmail(userDTO.getEmail());
+        // if (userDTO.getPassword() != null) this.setPassword(userDTO.getPassword());
+        return this;
+    }
 }
