@@ -41,6 +41,7 @@ public class ReminderScheduler {
                 // Create a new reminder entry
                 Reminder newReminder = new Reminder();
                 newReminder.setAssignment(assignment);
+                newReminder.setReminderDate(java.time.LocalDate.now());
                 newReminder.setStatus(ReminderStatus.valueOf("PENDING"));
                 reminderService.saveReminder(newReminder);
                 reminderService.sendReminder(newReminder.getId());
