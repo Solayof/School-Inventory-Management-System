@@ -33,7 +33,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 @RestController
-@RequestMapping("/reminders")
+@RequestMapping("/api/reminders")
 public class ReminderController {
     @Autowired
     private ReminderService reminderService;

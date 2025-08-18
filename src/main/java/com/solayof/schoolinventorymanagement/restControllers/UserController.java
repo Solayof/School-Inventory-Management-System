@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("users")
+@RequestMapping("/api/users")
 public class UserController {
     private final UserRepository userRepository;
     private final UserModelAssembler assembler;
