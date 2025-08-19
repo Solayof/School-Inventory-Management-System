@@ -2,6 +2,7 @@ package com.solayof.schoolinventorymanagement.services;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -135,6 +136,31 @@ public class ReminderService {
                 log.error("Failed to send reminder for assignment ID: {}. Error: {}", assignment.getId(), e.getMessage());
             }
         }
+    }
+
+    /**
+     * Sends reminders that are due within the last hour.
+     * This method fetches reminders that are due and have a status of PENDING or FAILED
+     */
+    @Transactional
+    public void sendDueReminders() {
+        LocalDateTime now = LocalDateTime.now();
+        List<Reminder> dueReminders = reminderRepository.findRemindersDueWithinLastHour(
+            now.minusHours(1),
+            now,
+            List.of(
+                ReminderStatus.PENDING,
+                ReminderStatus.FAILED)
+            );
+        for (Reminder reminder : dueReminders) {
+            try {
+                sendReminder(reminder.getId());
+                log.info("Sent due reminder ID: {} for assignment ID: {}", reminder.getId(), reminder.getAssignment().getId());
+            } catch (Exception e) {
+                log.error("Failed to send due reminder ID: {}. Error: {}", reminder.getId(), e.getMessage());
+            }
+        }
+
     }
 
 }
