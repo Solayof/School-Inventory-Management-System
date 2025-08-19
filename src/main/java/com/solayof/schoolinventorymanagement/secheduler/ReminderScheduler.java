@@ -22,4 +22,11 @@ public class ReminderScheduler {
         reminderService.processOverdueReminders();
         log.info("Finished scheduled task: Overdue reminder check completed.");
     }
+
+    @Scheduled(fixedRate = 3600000) // Every hour from application start
+    public void sendDueReminderEveryHour() {
+        log.info("Running scheduled task: Sending due reminders...");
+        reminderService.sendDueReminders();
+        log.info("Finished scheduled task: Due reminders sent.");
+    }
 }
