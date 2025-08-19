@@ -1,6 +1,6 @@
 package com.solayof.schoolinventorymanagement.repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,8 +20,8 @@ public interface ReminderRepository extends JpaRepository<Reminder, UUID> {
         AND r.status IN (:statuses)
     """)
     List<Reminder> findRemindersDueWithinLastHour(
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime,
+            @Param("startTime") LocalDate startTime,
+            @Param("endTime") LocalDate endTime,
             @Param("statuses") List<ReminderStatus> statuses
     );
 }
