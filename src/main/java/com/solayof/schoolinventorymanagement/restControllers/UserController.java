@@ -10,13 +10,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.web.bind.annotation.*;
 
+import com.solayof.schoolinventorymanagement.dtos.UpdateUserDTO;
 import com.solayof.schoolinventorymanagement.entity.UserEntity;
-import com.solayof.schoolinventorymanagement.exceptions.UserNotFoundException;
 import com.solayof.schoolinventorymanagement.modelAssembler.UserModelAssembler;
 import com.solayof.schoolinventorymanagement.repository.UserRepository;
+import com.solayof.schoolinventorymanagement.services.UserService;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,13 +31,13 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    private final UserRepository userRepository;
-    private final UserModelAssembler assembler;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private UserModelAssembler assembler;
+    @Autowired
+    private UserService userService;
 
-    public UserController(UserRepository userRepository, UserModelAssembler assembler) {
-        this.userRepository = userRepository;
-        this.assembler = assembler;
-    }
 
 
     @GetMapping("")
@@ -232,11 +234,100 @@ public class UserController {
             
     })
     public EntityModel<UserEntity> getOne(@Valid @PathVariable UUID id) {
-        UserEntity user = userRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException(id));
-        return assembler.toModel(user);
+        return assembler.toModel(userService.getUserById(id));
     }
     
+    @PutMapping("password/{id}/")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPERADMIN')")
+    @Operation(
+        summary = "Update a user password with the given id in the server",
+        description = "Update a user password in the server and request user most right permission to retrieve data"
+        )
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "successfully update a user",
+                    content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(implementation = UserEntity.class),
+                        examples = @ExampleObject(
+                            name = "userExample",
+                            summary = "Sample user",
+                            value = """
+                            {
+                                "id": "ad0facf3-3155-402f-8d5f-34b7e566e08c",
+                                "firstName": "Solomon",
+                                "middleName": "Ayofemi",
+                                "lastName": "Moses",
+                                "email": "solop@gmail.com",
+                                "dob": "12/10/1992",
+                                "createdAt": "2025-06-18T00:00:00",
+                                "roles": [
+                                    {
+                                        "name": "ROLE_ADMIN"
+                                    },
+                                    {
+                                        "name": "ROLE_USER"
+                                    },
+                                    {
+                                        "name": "ROLE_MODERATOR"
+                                    }
+                                ],
+                                "_links": {
+                                    "self": {
+                                        "href": "http://localhost:8080/users/ad0facf3-3155-402f-8d5f-34b7e566e08c"
+                                    },
+                                    "users": {
+                                        "href": "http://localhost:8080/users"
+                                    }
+                                }
+                            }
+                            """
+                        )
+        )
+            ),
+
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Forbidden: No authencation provided or jwt as expired or user dont have right permission to access the resources",
+                    content = @Content(
+                        mediaType = "application/json",
+                        
+                        examples = @ExampleObject(
+                            name = "ErrorExample",
+                            summary = "return nothing",
+                            value = """
+                
+                            """
+                        )
+        )
+            ),
+        
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found",
+                    content = @Content(
+                        mediaType = "application/plain",
+                        examples = @ExampleObject(
+                            name = "userExample",
+                            summary = "Sample user",
+                            value = """
+                            Could not find user with id: ad0facf3-3155-402f-8d5f-034b7e566e08
+                            """
+                        )
+        )
+            )
+            
+    })
+    public EntityModel<UserEntity> updatePassword(@RequestBody UpdateUserDTO newUser, @Valid @PathVariable UUID id) {
+        UserEntity usr = userService.getUserById(id);
+        if (newUser.getPassword() == null) throw new IllegalArgumentException("password field can not be empty");
+        usr.setPassword(newUser.getPassword());
+        return assembler.toModel(userService.updateUserPassword(usr));
+    }
+
+
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPERADMIN')")
     @Operation(
@@ -320,18 +411,9 @@ public class UserController {
             )
             
     })
-    public EntityModel<UserEntity> updateOne(@RequestBody UserEntity newUser, @Valid @PathVariable UUID id) {
-        UserEntity usr = userRepository.findById(id)
-            .map(user -> {
-                user.setFirstName(newUser.getFirstName());
-                user.setMiddleName(newUser.getMiddleName());
-                user.setLastName(newUser.getLastName());
-                user.setRoles(newUser.getRoles());
-
-                return userRepository.save(user);
-            })
-            .orElseThrow(() -> new UserNotFoundException(id));
-        return assembler.toModel(usr);
+    public EntityModel<UserEntity> updateOne(@RequestBody UpdateUserDTO newUser, @Valid @PathVariable UUID id) {
+        UserEntity usr = userService.getUserById(id);
+        return assembler.toModel(userService.save(usr.updateEntity(newUser)));
     }
 
 }
