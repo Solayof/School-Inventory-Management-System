@@ -43,13 +43,14 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public String updateUser(UserEntity user) {
-        userRepository.save(user);
-        return "UserEntity updated Sucessfully";
+    public UserEntity save(UserEntity user) {
+        return userRepository.save(user);
+
     }
 
     @Transactional
-    public String updateUserPassword(UserEntity user) {
-        return addUser(user);
+    public UserEntity updateUserPassword(UserEntity user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 }
