@@ -62,7 +62,7 @@ public class UserEntity {
         inverseJoinColumns = @JoinColumn(name="role_id"))
     private Set<RoleEntity> roles = new HashSet<>();
 
-    public UserEntity updatEntity(UpdateUserDTO userDTO) {
+    public UserEntity updateEntity(UpdateUserDTO userDTO) {
         if (userDTO.getFirstName() != null) this.setFirstName(userDTO.getFirstName());
         if (userDTO.getGender() != null) this.setGender(userDTO.getGender());
         if (userDTO.getLastName() != null) this.setLastName(userDTO.getLastName());
