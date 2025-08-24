@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.hateoas.EntityModel;
 
+import com.solayof.schoolinventorymanagement.dtos.UpdateUserDTO;
 import com.solayof.schoolinventorymanagement.entity.UserEntity;
 import com.solayof.schoolinventorymanagement.exceptions.UserNotFoundException;
 import com.solayof.schoolinventorymanagement.modelAssembler.UserModelAssembler;
@@ -76,7 +77,7 @@ public class UserControllerTest {
 
     @Test
     public void testUpdateUser_success() {
-        UserEntity updatedUser = new UserEntity();
+        UpdateUserDTO updatedUser = new UpdateUserDTO();
         updatedUser.setFirstName("Updated");
         updatedUser.setMiddleName("Middle");
         updatedUser.setLastName("User");
@@ -97,7 +98,7 @@ public class UserControllerTest {
     public void testUpdateUser_userNotFound_throwsException() {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        UserEntity newUser = new UserEntity();
+        UpdateUserDTO newUser = new UpdateUserDTO();
         newUser.setFirstName("New");
 
         assertThrows(UserNotFoundException.class, () -> userController.updateOne(newUser, userId));

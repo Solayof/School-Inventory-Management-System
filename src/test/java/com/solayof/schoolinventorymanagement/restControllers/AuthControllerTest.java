@@ -84,7 +84,7 @@ public class AuthControllerTest {
         signupDTO.setPassword("123456");
         signupDTO.setFirstName("Test");
         signupDTO.setDob(LocalDate.now());
-        signupDTO.setUserType("TEACHER");
+
         signupDTO.setRoles(Set.of(ERole.ROLE_ADMIN, ERole.ROLE_MANAGER));
 
         when(userRepository.existsByEmail(signupDTO.getEmail())).thenReturn(false);
