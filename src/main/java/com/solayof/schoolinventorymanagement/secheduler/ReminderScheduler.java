@@ -40,13 +40,14 @@ public class ReminderScheduler {
             try {
                 // Create a new reminder entry
                 Reminder newReminder = new Reminder();
-                newReminder.setAssignment(assignment);
+                Assignment ass = assignmentService.findByAssignmentId(assignment.getId()); // avoid proxy initialization if item and collector
+                newReminder.setAssignment(ass);
                 newReminder.setReminderDate(java.time.LocalDate.now());
                 newReminder.setStatus(ReminderStatus.valueOf("PENDING"));
                 reminderService.saveReminder(newReminder);
                 reminderService.sendReminder(newReminder.getId());
                 log.info("Sent reminder for overdue assignment ID: {} (Item: {}, Collector: {})",
-                        assignment.getId(), assignment.getItem().getName(), assignment.getCollector().getName());
+                        assignment.getId(), ass.getItem().getName(), ass.getCollector().getName());
             } catch (Exception e) {
                 log.error("Failed to send reminder for assignment ID: {}. Error: {}", assignment.getId(), e.getMessage());
             }
