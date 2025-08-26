@@ -1,6 +1,7 @@
 package com.solayof.schoolinventorymanagement.services;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,6 +24,8 @@ public class ReminderService {
     private ReminderRepository reminderRepository; // Injecting the ReminderRepository to interact with reminders
     @Autowired
     private MailService mailService; // Inject MailService
+    @Autowired
+    private AssignmentService assignmentService; // Inject AssignmentService
 
     /**
      * Saves a reminder to the repository.
@@ -108,6 +111,30 @@ public class ReminderService {
         Reminder reminder = findByReminderId(id);
         reminder.setStatus(newStatus);
         return reminderRepository.save(reminder);
+    }
+
+
+    @Transactional
+    public void processOverdueReminders() {
+        List<Assignment> overdueAssignments = assignmentService.getOverdueAssignments();
+
+        for (Assignment assignment : overdueAssignments) {
+            try {
+                
+                Reminder newReminder = new Reminder();
+                newReminder.setAssignment(assignment);
+                newReminder.setReminderDate(LocalDate.now());
+                newReminder.setStatus(ReminderStatus.PENDING);
+                reminderRepository.save(newReminder);
+    
+                sendReminder(newReminder.getId());
+    
+                log.info("Sent reminder for overdue assignment ID: {} (Item: {}, Collector: {})",
+                        assignment.getId(), assignment.getItem().getName(), assignment.getCollector().getName());
+            } catch (Exception e) {
+                log.error("Failed to send reminder for assignment ID: {}. Error: {}", assignment.getId(), e.getMessage());
+            }
+        }
     }
 
 }
