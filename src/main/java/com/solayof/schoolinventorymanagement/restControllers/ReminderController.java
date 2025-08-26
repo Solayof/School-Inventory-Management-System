@@ -215,4 +215,18 @@ public class ReminderController {
         Reminder updatedReminder = reminderService.updateReminderStatus(id, status);
         return ResponseEntity.ok(updatedReminder);
     }
+
+    /**
+     * Endpoint to manually trigger the processing of overdue assignments and sending reminders.
+     */
+    @GetMapping("/trigger")
+    @Operation(summary = "Trigger overdue assignment check", description = "Manually triggers the check for overdue assignments and sends reminders.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Overdue assignment check triggered successfully")
+    })
+    public ResponseEntity<Void> triggerOverdueAssignment() {
+        reminderService.processOverdueReminders();
+        return ResponseEntity.noContent().build();
+    }
+    
 }
