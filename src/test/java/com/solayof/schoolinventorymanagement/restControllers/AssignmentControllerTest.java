@@ -123,7 +123,7 @@ class AssignmentControllerTest {
     }
 
     /**
-     * Test for the createAssignment endpoint (POST /assignments).
+     * Test for the createAssignment endpoint (POST /api/assignments).
      * Verifies that a new assignment is created successfully when valid data is provided.
      */
     @Test
@@ -135,7 +135,7 @@ class AssignmentControllerTest {
         when(assembler.toModel(any(Assignment.class))).thenReturn(assignmentEntityModel);
 
         // Perform POST request and verify response
-        mockMvc.perform(post("/assignments")
+        mockMvc.perform(post("/api/assignments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(assignmentDTO)))
                 .andExpect(status().isCreated())
@@ -144,7 +144,7 @@ class AssignmentControllerTest {
     }
 
     /**
-     * Test for the getOne endpoint (GET /assignments/{id}).
+     * Test for the getOne endpoint (GET /api/assignments/{id}).
      * Verifies that a single assignment can be fetched by its ID.
      */
     @Test
@@ -154,14 +154,14 @@ class AssignmentControllerTest {
         when(assembler.toModel(assignment)).thenReturn(assignmentEntityModel);
 
         // Perform GET request and verify response
-        mockMvc.perform(get("/assignments/{id}", assignmentId))
+        mockMvc.perform(get("/api/assignments/{id}", assignmentId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.collectorId", is(assignmentDTO.getCollectorId().toString())))
-                .andExpect(jsonPath("$._links.self.href", endsWith("/assignments/" + assignmentId)));
+                .andExpect(jsonPath("$._links.self.href", endsWith("/api/assignments/" + assignmentId)));
     }
 
     /**
-     * Test for the updateAssignment endpoint (PUT /assignments/{id}).
+     * Test for the updateAssignment endpoint (PUT /api/assignments/{id}).
      * Verifies that an existing assignment can be successfully updated.
      */
     @Test
@@ -187,7 +187,7 @@ class AssignmentControllerTest {
         when(assembler.toModel(updatedAssignment)).thenReturn(updatedEntityModel);
 
         // Perform PUT request and verify response
-        mockMvc.perform(put("/assignments/{id}", assignmentId)
+        mockMvc.perform(put("/api/assignments/{id}", assignmentId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
@@ -195,7 +195,7 @@ class AssignmentControllerTest {
     }
 
     /**
-     * Test for the deleteAssignment endpoint (DELETE /assignments/{id}).
+     * Test for the deleteAssignment endpoint (DELETE /api/assignments/{id}).
      * Verifies that an assignment is deleted and returns a No Content status.
      */
     @Test
@@ -204,12 +204,12 @@ class AssignmentControllerTest {
         doNothing().when(assignmentService).deleteAssignment(assignmentId);
 
         // Perform DELETE request and verify response
-        mockMvc.perform(delete("/assignments/{id}", assignmentId))
+        mockMvc.perform(delete("/api/assignments/{id}", assignmentId))
                 .andExpect(status().isNoContent());
     }
 
     /**
-     * Test for the getOverdueAssignments endpoint (GET /assignments/overdue).
+     * Test for the getOverdueAssignments endpoint (GET /api/assignments/overdue).
      * Verifies that overdue assignments can be fetched.
      */
     @Test
@@ -218,12 +218,12 @@ class AssignmentControllerTest {
         when(assignmentService.getOverdueAssignments()).thenReturn(Collections.singletonList(assignment));
 
         // Perform GET request and verify response
-        mockMvc.perform(get("/assignments/overdue"))
+        mockMvc.perform(get("/api/assignments/overdue"))
                 .andExpect(status().isOk());
     }
 
     /**
-     * Test for the returnItem endpoint (PUT /assignments/{id}/return).
+     * Test for the returnItem endpoint (PUT/api /assignments/{id}/return).
      * Verifies that an item can be returned.
      */
     @Test
@@ -232,7 +232,7 @@ class AssignmentControllerTest {
         when(assignmentService.returnItem(assignmentId)).thenReturn(assignment);
 
         // Perform PUT request and verify response
-        mockMvc.perform(put("/assignments/{id}/return", assignmentId))
+        mockMvc.perform(put("/api/assignments/{id}/return", assignmentId))
                 .andExpect(status().isOk());
     }
 
@@ -249,7 +249,7 @@ class AssignmentControllerTest {
         when(assignmentService.updateAssignment(assignmentId, newReturnDueDate)).thenReturn(assignment);
 
         // Perform PUT request and verify response
-        mockMvc.perform(put("/assignments/{id}/update-due-date", assignmentId)
+        mockMvc.perform(put("/api/assignments/{id}/update-due-date", assignmentId)
                         .param("newReturnDueDate", newReturnDueDate.toString()))
                 .andExpect(status().isOk());
     }

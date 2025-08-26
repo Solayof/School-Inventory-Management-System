@@ -119,10 +119,10 @@ class ReminderControllerTest {
         when(reminderModelAssembler.toModel(reminder)).thenReturn(reminderEntityModel);
 
         // Perform the GET request and verify the response
-        mockMvc.perform(get("/reminders/{id}", reminderId))
+        mockMvc.perform(get("/api/reminders/{id}", reminderId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message", is(reminderDTO.getMessage())))
-                .andExpect(jsonPath("$._links.self.href", endsWith("/reminders/" + reminderId)));
+                .andExpect(jsonPath("$._links.self.href", endsWith("/api/reminders/" + reminderId)));
     }
 
     /**
@@ -137,7 +137,7 @@ class ReminderControllerTest {
         when(reminderModelAssembler.toModel(any(Reminder.class))).thenReturn(reminderEntityModel);
 
         // Perform the POST request and verify the response
-        mockMvc.perform(post("/reminders")
+        mockMvc.perform(post("/api/reminders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reminderDTO)))
                 .andExpect(status().isCreated())
@@ -156,7 +156,7 @@ class ReminderControllerTest {
         when(reminderModelAssembler.toCollectionModel(any())).thenReturn(CollectionModel.of(Collections.singletonList(reminderEntityModel)));
 
         // Perform the GET request and verify the response
-        mockMvc.perform(get("/reminders/status/{status}", ReminderStatus.PENDING))
+        mockMvc.perform(get("/api/reminders/status/{status}", ReminderStatus.PENDING))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.reminderDTOList[0].status", is(ReminderStatus.PENDING.toString())));
     }
@@ -194,7 +194,7 @@ class ReminderControllerTest {
         when(reminderModelAssembler.toModel(updatedReminder)).thenReturn(updatedEntityModel);
 
         // Perform the PUT request and verify the response
-        mockMvc.perform(put("/reminders/{id}", reminderId)
+        mockMvc.perform(put("/api/reminders/{id}", reminderId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
@@ -212,7 +212,7 @@ class ReminderControllerTest {
         doNothing().when(reminderService).deleteReminder(reminderId);
 
         // Perform the DELETE request and verify the response
-        mockMvc.perform(delete("/reminders/{id}", reminderId))
+        mockMvc.perform(delete("/api/reminders/{id}", reminderId))
                 .andExpect(status().isNoContent());
     }
 
@@ -226,7 +226,7 @@ class ReminderControllerTest {
         when(assignmentService.getRemindersByAssignmentId(assignmentId)).thenReturn(Collections.singletonList(reminder));
 
         // Perform the GET request and verify the response
-        mockMvc.perform(get("/reminders/assignment/{assignmentId}", assignmentId))
+        mockMvc.perform(get("/api/reminders/assignment/{assignmentId}", assignmentId))
                 .andExpect(status().isOk());
     }
 
@@ -242,7 +242,7 @@ class ReminderControllerTest {
         when(reminderService.sendReminder(reminderId)).thenReturn(reminder);
 
         // Perform the POST request and verify the response
-        mockMvc.perform(post("/reminders/manual-send/{assignmentId}", assignmentId)
+        mockMvc.perform(post("/api/reminders/manual-send/{assignmentId}", assignmentId)
                         .param("message", "Manual reminder message"))
                 .andExpect(status().isOk());
     }
@@ -259,7 +259,7 @@ class ReminderControllerTest {
         when(reminderService.updateReminderStatus(reminderId, newStatus)).thenReturn(reminder);
 
         // Perform the PUT request and verify the response
-        mockMvc.perform(put("/reminders/{id}/status", reminderId)
+        mockMvc.perform(put("/api/reminders/{id}/status", reminderId)
                         .param("status", newStatus.toString()))
                 .andExpect(status().isOk());
     }
@@ -276,7 +276,7 @@ class ReminderControllerTest {
         when(reminderService.findByReminderId(nonExistentId)).thenThrow(new ReminderNotFoundException("Could not find reminder " + nonExistentId));
 
         // Perform the GET request and verify the response
-        mockMvc.perform(get("/reminders/{id}", nonExistentId))
+        mockMvc.perform(get("/api/reminders/{id}", nonExistentId))
                 .andExpect(status().isNotFound());
     }
 }

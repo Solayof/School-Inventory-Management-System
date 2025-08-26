@@ -102,7 +102,7 @@ class CategoryControllerTest {
     }
 
     /**
-     * Test for the createCategory endpoint (POST /categories).
+     * Test for the createCategory endpoint (POST /api/categories).
      * It verifies that a new category can be created successfully.
      */
     @Test
@@ -113,7 +113,7 @@ class CategoryControllerTest {
         when(assembler.toModel(any(Category.class))).thenReturn(categoryEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(post("/categories")
+        mockMvc.perform(post("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(categoryDto)))
                 .andExpect(status().isCreated()) // Expect HTTP 201 Created
@@ -122,7 +122,7 @@ class CategoryControllerTest {
     }
 
     /**
-     * Test for the getOne endpoint (GET /categories/{id}).
+     * Test for the getOne endpoint (GET /api/categories/{id}).
      * It verifies that a single category can be retrieved by its ID.
      */
     @Test
@@ -132,14 +132,14 @@ class CategoryControllerTest {
         when(assembler.toModel(category)).thenReturn(categoryEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(get("/categories/{id}", categoryId))
+        mockMvc.perform(get("/api/categories/{id}", categoryId))
                 .andExpect(status().isOk()) // Expect HTTP 200 OK
                 .andExpect(jsonPath("$.name", is(category.getName())))
-                .andExpect(jsonPath("$._links.self.href", endsWith("/categories/" + categoryId)));
+                .andExpect(jsonPath("$._links.self.href", endsWith("/api/categories/" + categoryId)));
     }
 
     /**
-     * Test for the getAll endpoint (GET /categories).
+     * Test for the getAll endpoint (GET /api/categories).
      * It verifies that a list of all categories can be retrieved.
      */
     @Test
@@ -150,14 +150,14 @@ class CategoryControllerTest {
         when(assembler.toModel(any(Category.class))).thenReturn(categoryEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(get("/categories"))
+        mockMvc.perform(get("/api/categories"))
                 .andExpect(status().isOk()) // Expect HTTP 200 OK
                 .andExpect(jsonPath("$._embedded.categoryDtoList", hasSize(1))) // Check if the list contains one item
                 .andExpect(jsonPath("$._embedded.categoryDtoList[0].name", is("Electronics")));
     }
 
     /**
-     * Test for the updateCategory endpoint (PUT /categories/{id}).
+     * Test for the updateCategory endpoint (PUT /api/categories/{id}).
      * It verifies that an existing category can be updated.
      */
     @Test
@@ -177,7 +177,7 @@ class CategoryControllerTest {
         when(assembler.toModel(updatedCategory)).thenReturn(updatedEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(put("/categories/{id}", categoryId)
+        mockMvc.perform(put("/api/categories/{id}", categoryId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk()) // Expect HTTP 200 OK
@@ -185,7 +185,7 @@ class CategoryControllerTest {
     }
 
     /**
-     * Test for the deleteCategory endpoint (DELETE /categories/{id}).
+     * Test for the deleteCategory endpoint (DELETE /api/categories/{id}).
      * It verifies that a category can be deleted by its ID.
      */
     @Test
@@ -195,12 +195,12 @@ class CategoryControllerTest {
         doNothing().when(categoryService).deleteCategory(categoryId);
 
         // --- Act & Assert ---
-        mockMvc.perform(delete("/categories/{id}", categoryId))
+        mockMvc.perform(delete("/api/categories/{id}", categoryId))
                 .andExpect(status().isNoContent()); // Expect HTTP 204 No Content
     }
 
     /**
-     * Test for the getItemsInCategory endpoint (GET /categories/{id}/items).
+     * Test for the getItemsInCategory endpoint (GET /api/categories/{id}/items).
      * It verifies that all items for a specific category can be retrieved.
      */
     @Test
@@ -219,13 +219,13 @@ class CategoryControllerTest {
         when(itemAssembler.toModel(any(Item.class))).thenReturn(itemEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(get("/categories/{id}/items", categoryId))
+        mockMvc.perform(get("/api/categories/{id}/items", categoryId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.itemDTOList[0].name", is("Laptop")));
     }
 
     /**
-     * Test for the searchCategoriesByName endpoint (GET /categories/search).
+     * Test for the searchCategoriesByName endpoint (GET /api/categories/search).
      * It verifies that categories can be searched by name.
      */
     @Test
@@ -237,7 +237,7 @@ class CategoryControllerTest {
         when(assembler.toModel(any(Category.class))).thenReturn(categoryEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(get("/categories/search").param("name", searchTerm))
+        mockMvc.perform(get("/api/categories/search").param("name", searchTerm))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.categoryDtoList[0].name", is("Electronics")));
     }

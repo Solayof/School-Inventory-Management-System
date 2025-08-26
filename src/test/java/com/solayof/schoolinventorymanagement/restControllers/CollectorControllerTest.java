@@ -93,7 +93,7 @@ class CollectorControllerTest {
     }
 
     /**
-     * Test for the createCollector endpoint (POST /collectors).
+     * Test for the createCollector endpoint (POST /api/collectors).
      * Verifies successful creation of a collector.
      */
     @Test
@@ -104,7 +104,7 @@ class CollectorControllerTest {
         when(assembler.toModel(any(Collector.class))).thenReturn(collectorEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(post("/collectors")
+        mockMvc.perform(post("/api/collectors")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(collectorDto)))
                 .andExpect(status().isCreated()) // Expect HTTP 201
@@ -113,7 +113,7 @@ class CollectorControllerTest {
     }
 
     /**
-     * Test for the getOne endpoint (GET /collectors/{collectorId}).
+     * Test for the getOne endpoint (GET /api/collectors/{collectorId}).
      * Verifies retrieval of a single collector by ID.
      */
     @Test
@@ -123,10 +123,10 @@ class CollectorControllerTest {
         when(assembler.toModel(collector)).thenReturn(collectorEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(get("/collectors/{collectorId}", collectorId))
+        mockMvc.perform(get("/api/collectors/{collectorId}", collectorId))
                 .andExpect(status().isOk()) // Expect HTTP 200
                 .andExpect(jsonPath("$.name", is(collector.getName())))
-                .andExpect(jsonPath("$._links.self.href", endsWith("/collectors/" + collectorId)));
+                .andExpect(jsonPath("$._links.self.href", endsWith("/api/collectors/" + collectorId)));
     }
 
     /**
@@ -141,14 +141,14 @@ class CollectorControllerTest {
         when(assembler.toModel(any(Collector.class))).thenReturn(collectorEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(get("/collectors"))
+        mockMvc.perform(get("/api/collectors"))
                 .andExpect(status().isOk()) // Expect HTTP 200
                 .andExpect(jsonPath("$._embedded.collectorDTOList", hasSize(1)))
                 .andExpect(jsonPath("$._embedded.collectorDTOList[0].name", is(collector.getName())));
     }
 
     /**
-     * Test for the updateCollector endpoint (PUT /collectors/{collectorId}).
+     * Test for the updateCollector endpoint (PUT /api/collectors/{collectorId}).
      * Verifies successful update of a collector's details.
      */
     @Test
@@ -169,7 +169,7 @@ class CollectorControllerTest {
         when(assembler.toModel(updatedCollector)).thenReturn(updatedEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(put("/collectors/{collectorId}", collectorId)
+        mockMvc.perform(put("/api/collectors/{collectorId}", collectorId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk()) // Expect HTTP 200
@@ -177,7 +177,7 @@ class CollectorControllerTest {
     }
 
     /**
-     * Test for the deleteCollector endpoint (DELETE /collectors/{collectorId}).
+     * Test for the deleteCollector endpoint (DELETE /api/collectors/{collectorId}).
      * Verifies successful deletion of a collector.
      */
     @Test
@@ -186,7 +186,7 @@ class CollectorControllerTest {
         doNothing().when(collectorService).deleteCollector(collectorId);
 
         // --- Act & Assert ---
-        mockMvc.perform(delete("/collectors/{collectorId}", collectorId))
+        mockMvc.perform(delete("/api/collectors/{collectorId}", collectorId))
                 .andExpect(status().isNoContent()); // Expect HTTP 204
     }
 
@@ -202,7 +202,7 @@ class CollectorControllerTest {
                 .thenThrow(new CollectorNotFoundException("Could not find collector " + nonExistentId));
 
         // --- Act & Assert ---
-        mockMvc.perform(get("/collectors/{collectorId}", nonExistentId))
+        mockMvc.perform(get("/api/collectors/{collectorId}", nonExistentId))
                 .andExpect(status().isNotFound()); // Expect HTTP 404
     }
 }

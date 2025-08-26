@@ -118,7 +118,7 @@ class ItemControllerTest {
     }
 
     /**
-     * Test for the createItem endpoint (POST /items).
+     * Test for the createItem endpoint (POST /api/items).
      * Verifies that a new item is created successfully when valid data is provided.
      */
     @Test
@@ -133,7 +133,7 @@ class ItemControllerTest {
         when(assembler.toModel(any(Item.class))).thenReturn(itemEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(post("/items")
+        mockMvc.perform(post("/api/items")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemDto)))
                 .andExpect(status().isCreated()) // Expect HTTP 201
@@ -152,10 +152,10 @@ class ItemControllerTest {
         when(assembler.toModel(item)).thenReturn(itemEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(get("/items/{id}", itemId))
+        mockMvc.perform(get("/api/items/{id}", itemId))
                 .andExpect(status().isOk()) // Expect HTTP 200
                 .andExpect(jsonPath("$.name", is(item.getName())))
-                .andExpect(jsonPath("$._links.self.href", endsWith("/items/" + itemId)));
+                .andExpect(jsonPath("$._links.self.href", endsWith("/api/items/" + itemId)));
     }
 
     /**
@@ -169,13 +169,13 @@ class ItemControllerTest {
         when(assembler.toModel(any(Item.class))).thenReturn(itemEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(get("/items"))
+        mockMvc.perform(get("/api/items"))
                 .andExpect(status().isOk()) // Expect HTTP 200
                 .andExpect(jsonPath("$._embedded.itemDTOList[0].name", is(item.getName())));
     }
 
     /**
-     * Test for the updateItem endpoint (PUT /items/{id}).
+     * Test for the updateItem endpoint (PUT /api/items/{id}).
      * Verifies that an existing item can be successfully updated.
      */
     @Test
@@ -198,7 +198,7 @@ class ItemControllerTest {
         when(assembler.toModel(updatedItem)).thenReturn(updatedEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(put("/items/{id}", itemId)
+        mockMvc.perform(put("/api/items/{id}", itemId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk()) // Expect HTTP 200
@@ -216,12 +216,12 @@ class ItemControllerTest {
         doNothing().when(itemService).deleteItem(itemId);
 
         // --- Act & Assert ---
-        mockMvc.perform(delete("/items/{id}", itemId))
+        mockMvc.perform(delete("/api/items/{id}", itemId))
                 .andExpect(status().isNoContent()); // Expect HTTP 204
     }
 
     /**
-     * Test for the getItemsByStatus endpoint (GET /items/status).
+     * Test for the getItemsByStatus endpoint (GET /api/items/status).
      * Verifies that items can be filtered by their status.
      */
     @Test
@@ -231,7 +231,7 @@ class ItemControllerTest {
         when(assembler.toModel(any(Item.class))).thenReturn(itemEntityModel);
 
         // --- Act & Assert ---
-        mockMvc.perform(get("/items/status").param("status", "AVAILABLE"))
+        mockMvc.perform(get("/api/items/status").param("status", "AVAILABLE"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.itemDTOList[0].status", is("AVAILABLE")));
     }
@@ -249,7 +249,7 @@ class ItemControllerTest {
         when(itemService.findByItemId(nonExistentId)).thenThrow(new ItemNotFoundException("Could not find item " + nonExistentId));
 
         // --- Act & Assert ---
-        mockMvc.perform(get("/items/{id}", nonExistentId))
+        mockMvc.perform(get("/api/items/{id}", nonExistentId))
                 .andExpect(status().isNotFound()); // Expect HTTP 404
     }
 }
