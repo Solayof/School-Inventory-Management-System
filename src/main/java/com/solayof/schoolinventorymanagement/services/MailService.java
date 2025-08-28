@@ -15,7 +15,7 @@ public class MailService {
     
     public void sendEmail(String to, String subject, String body) throws MailException {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("noreply@schoolinventory.com"); // Configure this in application.properties
+        message.setFrom("noreply@schoolinventory.com");
         message.setTo(to);
         message.setSubject(subject);
         message.setText(body);
