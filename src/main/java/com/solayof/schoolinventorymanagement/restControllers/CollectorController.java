@@ -8,6 +8,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,7 @@ public class CollectorController {
      * @return EntityModel<CollectorDTO> containing the created collector and links
      */
     @PostMapping("")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPERADMIN')")
     @Operation(summary = "Create a new collector", description = "Creates a new inventory collector with the provided name and email.")
      @ApiResponses(value = {
         // This annotation documents the API responses for Swagger/OpenAPI
