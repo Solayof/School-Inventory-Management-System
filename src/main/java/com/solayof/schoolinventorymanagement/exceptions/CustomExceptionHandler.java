@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -86,6 +87,20 @@ public class CustomExceptionHandler {
         error.put("message", ex.getMessage());
 
         return new  ResponseEntity<>(error, HttpStatus.BAD_REQUEST); // Return a map with error details
+    }
+
+    /**
+     * Handles AccessDeniedException.
+     * This method returns a 403 Forbidden response with the exception message.
+     * @param ex the AccessDeniedException that was thrown
+     * @return ResponseEntity with the exception message and HTTP status 403 Forbidden
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
+        return new ResponseEntity<String>(
+                ex.getMessage(),
+                HttpStatus.FORBIDDEN
+        );
     }
 
     /**
