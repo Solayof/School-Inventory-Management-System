@@ -96,9 +96,12 @@ public class CustomExceptionHandler {
      * @return ResponseEntity with the exception message and HTTP status 403 Forbidden
      */
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
-        return new ResponseEntity<String>(
-                ex.getMessage(),
+    public ResponseEntity<ErrorDTO> handleAccessDeniedException(AccessDeniedException ex) {
+        ErrorDTO errorDTO = new ErrorDTO();
+        errorDTO.setCode(HttpStatus.FORBIDDEN.toString());
+        errorDTO.setMessage(ex.getMessage());
+        return new ResponseEntity<ErrorDTO>(
+                errorDTO,
                 HttpStatus.FORBIDDEN
         );
     }
